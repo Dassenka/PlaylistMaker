@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".SettingsActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:id="@+id/backToMainActivity">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:drawableStartCompat="@drawable/ic_arrow_back"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="14dp"
+            android:text="@string/settings"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_start"
+            android:layout_marginEnd="12dp"
+            android:paddingTop="@dimen/text_top"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_second"
+            android:text="@string/night_theme" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="@dimen/text_start"
+            android:paddingTop="@dimen/text_top"
+            android:text="@string/share"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_second"
+            app:drawableEndCompat="@drawable/ic_share"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="14dp"
+            android:layout_marginStart="@dimen/text_start"
+            android:paddingTop="@dimen/text_top"
+            android:text="@string/support"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_second"
+            app:drawableEndCompat="@drawable/ic_support" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="@dimen/text_start"
+            android:paddingTop="@dimen/text_top"
+            android:text="@string/agreement"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_second"
+            app:drawableEndCompat="@drawable/ic_arrow_forward"/>
+    </LinearLayout>
+</FrameLayout>
