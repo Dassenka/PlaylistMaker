@@ -5,6 +5,8 @@
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="icon_padding">10dp</dimen>
     <dimen name="text_start">16dp</dimen>
+    <dimen name="text_end">12dp</dimen>
     <dimen name="text_top">21dp</dimen>
+    <dimen name="padding_for_settings">20dp</dimen>
 
 </resources>
