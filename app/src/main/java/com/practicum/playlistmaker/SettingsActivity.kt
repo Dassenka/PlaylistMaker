@@ -1,7 +1,11 @@
 package com.practicum.playlistmaker
 
+import android.content.Intent
+import android.content.Intent.*
+import android.net.Uri
 import android.os.Bundle
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class SettingsActivity : AppCompatActivity()  {
@@ -14,5 +18,35 @@ class SettingsActivity : AppCompatActivity()  {
         back.setOnClickListener {
             finish()
         }
+
+        val share = findViewById<TextView>(R.id.share)
+        share.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SENDTO)
+            shareIntent.data = Uri.parse("mailto:")
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.android_address))
+           startActivity(shareIntent)
+        }
+
+        val support = findViewById<TextView>(R.id.support)
+        support.setOnClickListener {
+            val supportIntent = Intent(Intent.ACTION_SENDTO)
+            supportIntent.data = Uri.parse("mailto:")
+            supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_address)))
+            supportIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_themes))
+            supportIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.support_message))
+            startActivity(supportIntent)
+        }
+
+        val agreement = findViewById<TextView>(R.id.agreement)
+        agreement.setOnClickListener {
+            val agreementIntent = Intent(Intent.ACTION_VIEW)
+            agreementIntent.data = Uri.parse(getString(R.string.agreement_link))
+            startActivity(agreementIntent)
+        }
+
+
+
+
+
     }
 }
