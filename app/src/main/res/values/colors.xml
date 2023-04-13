@@ -9,4 +9,12 @@
     <color name="white">#ffffff</color>
     <color name="black">#1A1B22</color>
     <color name="blue">#3772E7</color>
+
+    <color name="image_color">#AEAFB4</color>
+    <color name="switch_color">#E6E8EB</color>
+    <color name="switch_night">#3772E7</color>
+
+    <color name="input_background_tint">#E6E8EB</color>
+    <color name="input_hint_tint">#AEAFB4</color>
+
 </resources>
