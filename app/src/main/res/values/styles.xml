@@ -85,4 +85,39 @@
         <item name="android:tint">@color/input_hint_tint</item>
     </style>
 
+    <style name="TrackName">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_second</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+        <item name="android:lines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TrackDescription">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/artist_name_size</item>
+        <item name="android:textColor">@color/input_hint_tint</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:lines">1</item>
+    </style>
+
+    <style name="Ellipse">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:drawableTint">@color/image_color</item>
+    </style>
+
+    <style name="TrackArrow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:tint">@color/image_color</item>
+</style>
+
 </resources>

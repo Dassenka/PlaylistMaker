@@ -9,4 +9,7 @@
     <dimen name="text_top">21dp</dimen>
     <dimen name="padding_for_settings">20dp</dimen>
 
+    <dimen name="track_size">45dp</dimen>
+    <dimen name="artist_name_size">11sp</dimen>
+
 </resources>

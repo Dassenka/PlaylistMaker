@@ -13,5 +13,8 @@
     <string name="support_message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="agreement_link">https://yandex.ru/legal/practicum_offer/</string>
 
+    <string name="track_name">Название песни</string>
+    <string name="artist_name">Название группы</string>
+    <string name="track_time">0:00</string>
 
 </resources>
