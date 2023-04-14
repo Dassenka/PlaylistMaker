@@ -6,10 +6,10 @@
     <dimen name="icon_padding">10dp</dimen>
     <dimen name="text_start">16dp</dimen>
     <dimen name="text_end">12dp</dimen>
-    <dimen name="text_top">21dp</dimen>
+    <dimen name="text_top">20dp</dimen>
     <dimen name="padding_for_settings">20dp</dimen>
 
-    <dimen name="track_size">45dp</dimen>
-    <dimen name="artist_name_size">11sp</dimen>
+    <dimen name="track_size">44dp</dimen>
+    <dimen name="artist_name_size">12sp</dimen>
 
 </resources>

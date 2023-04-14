@@ -55,8 +55,5 @@
         android:layout_height="wrap_content"
         tools:listitem="@layout/track_card"
         android:layout_marginTop ="24dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        >
-    </androidx.recyclerview.widget.RecyclerView>
-
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 </LinearLayout>

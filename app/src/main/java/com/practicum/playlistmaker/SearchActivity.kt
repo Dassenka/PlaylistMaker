@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
-    var inputText :String = ""
+    private var inputText :String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -74,7 +74,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val INPUT_EDIT_TEXT = "INPUT_EDIT_TEXT"
+        private const val INPUT_EDIT_TEXT = "INPUT_EDIT_TEXT"
 
         private val trackList = mutableListOf(
             Track("Smells Like Teen Spirit",
