@@ -41,7 +41,9 @@
             style="@style/InputEditText"
             android:id="@+id/InputEditText"
             android:hint="@string/search"
-            android:drawableStart="@drawable/ic_search_hint"/>
+            android:drawableStart="@drawable/ic_search_hint"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <ImageView
             style="@style/ClearIcon"
@@ -53,7 +55,40 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="visible"
         tools:listitem="@layout/track_card"
         android:layout_marginTop ="24dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+    <LinearLayout
+        android:id="@+id/placeholder_message_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="110dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone">
+
+        <ImageView
+            style="@style/InternetError"
+            android:id="@+id/internet_error"
+            android:visibility="gone"/>
+
+        <ImageView
+            style="@style/SearchError"
+            android:id="@+id/search_error"
+            android:visibility="gone"/>
+
+        <TextView
+            style="@style/ErrorMessage"
+            android:id="@+id/error_message"
+            tools:text="Some text"/>
+
+        <Button
+            style="@style/ButtonUpdate"
+            android:id="@+id/button_update"
+            android:visibility="gone"/>
+    </LinearLayout>
 </LinearLayout>
