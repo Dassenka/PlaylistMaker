@@ -6,8 +6,9 @@ import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 
-class SettingsActivity : AppCompatActivity()  {
+class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -24,7 +25,7 @@ class SettingsActivity : AppCompatActivity()  {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.android_address))
             }
-           startActivity(Intent.createChooser(shareIntent, ""))
+            startActivity(Intent.createChooser(shareIntent, ""))
         }
 
         val support = findViewById<TextView>(R.id.support)
@@ -45,9 +46,12 @@ class SettingsActivity : AppCompatActivity()  {
             startActivity(agreementIntent)
         }
 
+        val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitcher)
 
+        themeSwitcher.isChecked = (applicationContext as App).darkTheme
 
-
-
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
     }
 }

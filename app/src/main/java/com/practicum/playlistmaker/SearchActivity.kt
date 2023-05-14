@@ -18,7 +18,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
-    private var inputText :String = ""
+    private var inputText: String = ""
 
     private val baseUrl = "http://itunes.apple.com"
 
@@ -36,8 +36,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchError: View
     private lateinit var internetError: View
     private lateinit var errorMessageText: TextView
+    private lateinit var searchHistoryLay: LinearLayout
+    private lateinit var searchHistoryRecyclerView: RecyclerView
+    private lateinit var buttonClearHistory: Button
     private var trackSet = ArrayList<Track>()
     private val adapter = TrackAdapter(trackSet)
+    private var historyList = ArrayList<Track>()
+    private val adapterHistory = TrackAdapter(historyList)
+    private var searchHistory = SearchHistory(historyList)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +61,12 @@ class SearchActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener {
             inputEditText.setText("") // Очищаем поле ввода
-            val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(inputEditText.windowToken, 0) //убираем клавиатуру
+            val inputMethodManager =
+                getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(
+                inputEditText.windowToken,
+                0
+            ) //убираем клавиатуру
             trackSet.clear() // очищаем список песен
             placeholderMessageError.visibility = View.GONE
             adapter.notifyDataSetChanged() // очищвем RecyclerView
@@ -70,6 +80,17 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
+
+        val searchHistoryList = SearchHistory(historyList) //sharedPrefs,
+        historyList = searchHistoryList.createTrackListListFromJson()
+
+        searchHistoryLay = findViewById(R.id.search_history)
+        inputEditText.setOnFocusChangeListener { _, hasFocus -> // отслеживание состояния фокуса для отображения истории поиска
+
+            searchHistoryLay.visibility =
+                if (hasFocus && inputEditText.text.isEmpty() && historyList.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // empty
@@ -78,6 +99,12 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 inputText = inputEditText.text.toString()
                 clearButton.visibility = clearButtonVisibility(s)
+                searchHistoryLay.visibility =
+                    if (inputEditText.hasFocus() && s?.isEmpty() == true && historyList.isNotEmpty())
+                        View.VISIBLE else View.GONE // добавляем отображение/скрытие истории поиска
+                trackRecyclerView.visibility =
+                    if (inputEditText.hasFocus() && s?.isEmpty() == true && historyList.isNotEmpty())
+                        View.GONE else View.VISIBLE // скрываем список найденных трэков если пользователь вручную стер запрос
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -88,9 +115,17 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
         trackRecyclerView = findViewById(R.id.recyclerView)
-        adapter.track = trackSet //
-        trackRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        adapter.track = trackSet
+        trackRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         trackRecyclerView.adapter = adapter
+
+        searchHistoryRecyclerView = findViewById(R.id.recyclerView_search_history)
+        adapterHistory.track = historyList
+        searchHistoryRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        searchHistoryRecyclerView.adapter = adapterHistory
+
 
         placeholderMessageError = findViewById(R.id.placeholder_message_error)
         searchError = findViewById(R.id.search_error)
@@ -100,6 +135,13 @@ class SearchActivity : AppCompatActivity() {
 
         buttonUpdate.setOnClickListener {
             searchTrack()
+        }
+
+        buttonClearHistory = findViewById(R.id.button_clear_history)
+
+        buttonClearHistory.setOnClickListener {
+            searchHistory.clearHistory()
+            searchHistoryLay.visibility = View.GONE
         }
 
     }
@@ -120,6 +162,7 @@ class SearchActivity : AppCompatActivity() {
                             adapter.notifyDataSetChanged()
                         }
                         if (trackSet.isEmpty()) {
+                            trackRecyclerView.visibility = View.GONE
                             placeholderMessageError.visibility = View.VISIBLE
                             searchError.visibility = View.VISIBLE
                             internetError.visibility = View.GONE
@@ -130,9 +173,10 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                    trackRecyclerView.visibility = View.GONE
                     placeholderMessageError.visibility = View.VISIBLE
                     internetError.visibility = View.VISIBLE
-                    searchError.visibility =  View.GONE
+                    searchError.visibility = View.GONE
                     buttonUpdate.visibility = View.VISIBLE
                     errorMessageText.text = getString(R.string.internet_error)
                 }
