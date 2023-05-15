@@ -14,11 +14,9 @@ class SearchHistory(private var historyList: ArrayList<Track>) {
         historyList = createTrackListListFromJson()
 
         if (historyList.contains(track)) {
-            historyList.remove(track)
-            historyList.add(0, track)
-        } else {
-            historyList.add(0, track)
-        }
+            historyList.remove(track)}
+
+        historyList.add(0, track)
 
         if (historyList.size > HISTORY_SIZE) {
             historyList.removeAt(historyList.size - 1)
@@ -44,6 +42,8 @@ class SearchHistory(private var historyList: ArrayList<Track>) {
     }
 
     fun clearHistory() {
-        writeHistory(ArrayList())
+        App.sharedPrefs.edit()
+            .remove(HISTORY_PREFERENCES)
+            .apply()
     }
 }

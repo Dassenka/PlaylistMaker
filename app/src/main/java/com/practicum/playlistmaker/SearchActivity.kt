@@ -81,15 +81,16 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-        val searchHistoryList = SearchHistory(historyList) //sharedPrefs,
-        historyList = searchHistoryList.createTrackListListFromJson()
 
         searchHistoryLay = findViewById(R.id.search_history)
         inputEditText.setOnFocusChangeListener { _, hasFocus -> // отслеживание состояния фокуса для отображения истории поиска
-
-            searchHistoryLay.visibility =
-                if (hasFocus && inputEditText.text.isEmpty() && historyList.isNotEmpty()) View.VISIBLE else View.GONE
+            historyList =
+                searchHistory.createTrackListListFromJson()// перезапись истории из файла, на слуйчай если это первый поиск и не выходили из активити
+            if (hasFocus && inputEditText.text.isEmpty() && historyList.isNotEmpty()) {
+                showHistoryList()
+            } else searchHistoryLay.visibility = View.GONE
         }
+
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -99,12 +100,17 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 inputText = inputEditText.text.toString()
                 clearButton.visibility = clearButtonVisibility(s)
-                searchHistoryLay.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true && historyList.isNotEmpty())
-                        View.VISIBLE else View.GONE // добавляем отображение/скрытие истории поиска
+                historyList =
+                    searchHistory.createTrackListListFromJson()// перезапись истории из файла, на слуйчай если это первый поиск и не выходили из активити
+
+                if (inputEditText.hasFocus() && s?.isEmpty() == true && historyList.isNotEmpty()) {
+                    showHistoryList()
+                } else searchHistoryLay.visibility =
+                    View.GONE // добавляем отображение/скрытие истории поиска если пользователь вручную стер запрос
+
                 trackRecyclerView.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true && historyList.isNotEmpty())
-                        View.GONE else View.VISIBLE // скрываем список найденных трэков если пользователь вручную стер запрос
+                    if (inputEditText.hasFocus() && s?.isEmpty() == true)
+                        View.GONE else View.VISIBLE // скрываем список найденных трэков
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -121,10 +127,9 @@ class SearchActivity : AppCompatActivity() {
         trackRecyclerView.adapter = adapter
 
         searchHistoryRecyclerView = findViewById(R.id.recyclerView_search_history)
-        adapterHistory.track = historyList
         searchHistoryRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        searchHistoryRecyclerView.adapter = adapterHistory
+
 
 
         placeholderMessageError = findViewById(R.id.placeholder_message_error)
@@ -140,10 +145,18 @@ class SearchActivity : AppCompatActivity() {
         buttonClearHistory = findViewById(R.id.button_clear_history)
 
         buttonClearHistory.setOnClickListener {
-            searchHistory.clearHistory()
             searchHistoryLay.visibility = View.GONE
+            searchHistory.clearHistory()
+            historyList.clear()
         }
 
+    }
+
+    private fun showHistoryList() {
+        adapterHistory.track = historyList
+        searchHistoryRecyclerView.adapter = adapterHistory
+        adapterHistory.notifyDataSetChanged()
+        searchHistoryLay.visibility = View.VISIBLE
     }
 
     private fun searchTrack() {
