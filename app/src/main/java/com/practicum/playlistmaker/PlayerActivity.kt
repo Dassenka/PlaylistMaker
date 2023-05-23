@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker
 
-
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -10,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -45,10 +43,9 @@ class PlayerActivity : AppCompatActivity() {
         country = findViewById(R.id.trackCountry)
         collectionNameGroup = findViewById(R.id.collectionNameGroup)
 
-        track = intent.getSerializableExtra("PlayTrack") as Track
+        track = intent.getSerializableExtra(SearchActivity.PLAY_TRACK) as Track
 
         playTrack(track)
-
     }
 
     private fun playTrack(track: Track) {
@@ -73,5 +70,4 @@ class PlayerActivity : AppCompatActivity() {
             .transform(RoundedCorners(artworkUrl100.resources.getDimensionPixelSize(R.dimen.album_corner_radius)))
             .into(artworkUrl100)
     }
-
 }

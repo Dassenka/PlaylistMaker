@@ -191,6 +191,10 @@
     <ImageButton
         android:id="@+id/backToSearchButton"
         style="@style/BackToSearchButton"
+        android:layout_width="@dimen/size_back_to_search_button"
+        android:layout_height="@dimen/size_back_to_search_button"
+        android:layout_marginStart="@dimen/margin_back_to_search_button"
+        android:layout_marginTop="@dimen/margin_back_to_search_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -208,6 +212,5 @@
         app:layout_constraintTop_toBottomOf="@+id/backToSearchButton"
         app:srcCompat="@drawable/ic_placeholder_player"
         tools:ignore="ContentDescription"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,4 +17,6 @@
     <dimen name="activity_player_guideline_padding">24dp</dimen>
     <dimen name="margin_between_attributes">17dp</dimen>
     <dimen name="attributes_margin_from_guideline">-8dp</dimen>
+    <dimen name="size_back_to_search_button">48dp</dimen>
+    <dimen name="margin_back_to_search_button">4dp</dimen>
 </resources>
