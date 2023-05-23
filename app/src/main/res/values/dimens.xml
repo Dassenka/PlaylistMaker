@@ -12,4 +12,11 @@
     <dimen name="track_size">44dp</dimen>
     <dimen name="artist_name_size">12sp</dimen>
 
+    <dimen name="activity_player_attribute_size">13sp</dimen>
+    <dimen name="album_corner_radius">8dp</dimen>
+    <dimen name="activity_player_guideline_padding">24dp</dimen>
+    <dimen name="margin_between_attributes">17dp</dimen>
+    <dimen name="attributes_margin_from_guideline">-8dp</dimen>
+    <dimen name="size_back_to_search_button">48dp</dimen>
+    <dimen name="margin_back_to_search_button">4dp</dimen>
 </resources>

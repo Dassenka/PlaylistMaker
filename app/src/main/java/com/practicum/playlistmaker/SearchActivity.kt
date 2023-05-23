@@ -1,6 +1,8 @@
 package com.practicum.playlistmaker
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,7 +21,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     private var inputText: String = ""
-
     private val baseUrl = "http://itunes.apple.com"
 
     private val retrofit = Retrofit.Builder()
@@ -44,7 +45,6 @@ class SearchActivity : AppCompatActivity() {
     private var historyList = ArrayList<Track>()
     private val adapterHistory = TrackAdapter(historyList)
     private var searchHistory = SearchHistory(historyList)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,8 +80,6 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-
-
         searchHistoryLay = findViewById(R.id.search_history)
         inputEditText.setOnFocusChangeListener { _, hasFocus -> // отслеживание состояния фокуса для отображения истории поиска
             historyList =
@@ -90,7 +88,6 @@ class SearchActivity : AppCompatActivity() {
                 showHistoryList()
             } else searchHistoryLay.visibility = View.GONE
         }
-
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -130,8 +127,6 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-
-
         placeholderMessageError = findViewById(R.id.placeholder_message_error)
         searchError = findViewById(R.id.search_error)
         internetError = findViewById(R.id.internet_error)
@@ -149,7 +144,6 @@ class SearchActivity : AppCompatActivity() {
             searchHistory.clearHistory()
             historyList.clear()
         }
-
     }
 
     private fun showHistoryList() {
@@ -217,6 +211,14 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         private const val INPUT_EDIT_TEXT = "INPUT_EDIT_TEXT"
+        const val PLAY_TRACK = "PLAY_TRACK"
+
+        //функция вызова PlayerActivity для TrackAdapter
+        fun startActivity(track: Track, context: Context) {
+            val playerIntent = Intent(context, PlayerActivity::class.java)
+            playerIntent.putExtra(PLAY_TRACK, track) // передаем track в новую активити
+            context.startActivity(playerIntent)
+        }
     }
 }
 
