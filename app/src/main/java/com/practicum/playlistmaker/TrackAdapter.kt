@@ -17,8 +17,10 @@ class TrackAdapter(var track: List<Track>) : RecyclerView.Adapter<TrackViewHolde
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(track[position])
         holder.itemView.setOnClickListener { //слушатель нажатия на трэк
-            searchHistory.addTrackInHistory(track[position]) //функция добавления трэка
-            SearchActivity.startActivity(track[position], it.context) //вызываем новую активити
+            if (SearchActivity.clickDebounce()) {
+                searchHistory.addTrackInHistory(track[position]) //функция добавления трэка
+                SearchActivity.startActivity(track[position], it.context) //вызываем новую активити
+            }
         }
     }
 

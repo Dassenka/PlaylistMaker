@@ -133,9 +133,11 @@
         app:layout_constraintTag="trackTimeTag"
         tools:text="Some text" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/buttonPlay"
         style="@style/ButtonPlay"
+        android:src="@drawable/ic_play_button"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="@+id/horizontal_guideline"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
