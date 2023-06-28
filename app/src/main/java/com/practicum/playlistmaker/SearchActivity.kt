@@ -11,7 +11,12 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,7 +55,7 @@ class SearchActivity : AppCompatActivity() {
     private var searchHistory = SearchHistory(historyList)
 
     private val searchRunnable = Runnable { searchTrack() } //поиск через каждые 2 сек после ввода(Debounce)
-
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -241,9 +246,7 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val INPUT_EDIT_TEXT = "INPUT_EDIT_TEXT"
         const val PLAY_TRACK = "PLAY_TRACK"
-        private var isClickAllowed = true
-        private val handler = Handler(Looper.getMainLooper())
-        private const val CLICK_DEBOUNCE_DELAY = 1000L // ограничение нажатия на элементы списка не чаще одного раза в секунду
+
         private const val SEARCH_DEBOUNCE_DELAY = 2000L //отслеживание строки поля ввода - две секунды с момента последнего его изменения
 
         //функция вызова PlayerActivity для TrackAdapter
@@ -251,15 +254,6 @@ class SearchActivity : AppCompatActivity() {
                 val playerIntent = Intent(context, PlayerActivity::class.java)
                 playerIntent.putExtra(PLAY_TRACK, track) // передаем track в новую активити
                 context.startActivity(playerIntent)
-        }
-
-        fun clickDebounce() : Boolean { // ограничение нажатия на элементы списка не чаще одного раза в секунду
-            val current = isClickAllowed
-            if (isClickAllowed) {
-                isClickAllowed = false
-                handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-            }
-            return current
         }
     }
 }

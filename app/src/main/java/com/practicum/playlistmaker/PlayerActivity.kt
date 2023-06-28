@@ -13,7 +13,8 @@ import androidx.constraintlayout.widget.Group
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -34,6 +35,7 @@ class PlayerActivity : AppCompatActivity() {
     private var playerState = STATE_DEFAULT
 
     private lateinit var mainThreadHandler: Handler
+    private val timer =  createUpdateTimerTask()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,12 +74,12 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         pausePlayer()
-        mainThreadHandler.removeCallbacks(createUpdateTimerTask())
+        mainThreadHandler.removeCallbacks(timer)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mainThreadHandler.removeCallbacksAndMessages(null)
+        mainThreadHandler.removeCallbacks(timer)
         playerState = STATE_PREPARED
         mediaPlayer.release()
     }
@@ -115,7 +117,7 @@ class PlayerActivity : AppCompatActivity() {
         }
         mediaPlayer.setOnCompletionListener { //будет вызываться автоматически после завершения воспроизведения
             playerState = STATE_PREPARED
-            mainThreadHandler.removeCallbacks(createUpdateTimerTask())
+            mainThreadHandler.removeCallbacks(timer)
             buttonPlay.setImageResource(R.drawable.ic_play_button)
             progressTrackTime.setText(R.string.progressTrackTime)
         }
@@ -137,14 +139,14 @@ class PlayerActivity : AppCompatActivity() {
         buttonPlay.setImageResource(R.drawable.ic_pause_button)
         playerState = STATE_PLAYING
         mainThreadHandler.post(
-            createUpdateTimerTask()
+            timer
         )
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
         playerState = STATE_PAUSED
-        mainThreadHandler.removeCallbacks(createUpdateTimerTask())
+        mainThreadHandler.removeCallbacks(timer)
         buttonPlay.setImageResource(R.drawable.ic_play_button)
     }
 
