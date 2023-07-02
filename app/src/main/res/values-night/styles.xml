@@ -197,10 +197,10 @@
         <item name="android:ellipsize">end</item>
     </style>
 
-    <style name="ButtonPlay">
+    <style name="ButtonPlay" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:src">@drawable/ic_play_button</item>
+        <item name="android:backgroundTint">@color/black</item>
         <item name="android:tint">@color/white</item>
     </style>
 

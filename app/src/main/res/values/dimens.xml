@@ -19,4 +19,6 @@
     <dimen name="attributes_margin_from_guideline">-8dp</dimen>
     <dimen name="size_back_to_search_button">48dp</dimen>
     <dimen name="margin_back_to_search_button">4dp</dimen>
+    <dimen name="progressbar_size">44dp</dimen>
+    <dimen name="margin_top_progressbar">148dp</dimen>
 </resources>

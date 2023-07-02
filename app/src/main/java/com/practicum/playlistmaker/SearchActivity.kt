@@ -4,12 +4,19 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,11 +47,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistoryLay: LinearLayout
     private lateinit var searchHistoryRecyclerView: RecyclerView
     private lateinit var buttonClearHistory: Button
+    private lateinit var progressBar: ProgressBar
     private var trackSet = ArrayList<Track>()
     private val adapter = TrackAdapter(trackSet)
     private var historyList = ArrayList<Track>()
     private val adapterHistory = TrackAdapter(historyList)
     private var searchHistory = SearchHistory(historyList)
+
+    private val searchRunnable = Runnable { searchTrack() } //поиск через каждые 2 сек после ввода(Debounce)
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +80,7 @@ class SearchActivity : AppCompatActivity() {
             ) //убираем клавиатуру
             trackSet.clear() // очищаем список песен
             placeholderMessageError.visibility = View.GONE
+            progressBar.visibility = View.GONE
             adapter.notifyDataSetChanged() // очищвем RecyclerView
         }
 
@@ -100,10 +112,18 @@ class SearchActivity : AppCompatActivity() {
                 historyList =
                     searchHistory.createTrackListListFromJson()// перезапись истории из файла, на слуйчай если это первый поиск и не выходили из активити
 
+                searchDebounce()
                 if (inputEditText.hasFocus() && s?.isEmpty() == true && historyList.isNotEmpty()) {
                     showHistoryList()
-                } else searchHistoryLay.visibility =
-                    View.GONE // добавляем отображение/скрытие истории поиска если пользователь вручную стер запрос
+                } else {
+                    searchHistoryLay.visibility = View.GONE
+                    progressBar.visibility = View.GONE
+                    trackRecyclerView.visibility = View.GONE
+                    placeholderMessageError.visibility = View.GONE
+                    searchError.visibility = View.GONE
+                    internetError.visibility = View.GONE
+                    buttonUpdate.visibility = View.GONE
+                } // добавляем отображение/скрытие истории поиска если пользователь вручную стер запрос
 
                 trackRecyclerView.visibility =
                     if (inputEditText.hasFocus() && s?.isEmpty() == true)
@@ -144,6 +164,8 @@ class SearchActivity : AppCompatActivity() {
             searchHistory.clearHistory()
             historyList.clear()
         }
+
+        progressBar= findViewById(R.id.progressBar)
     }
 
     private fun showHistoryList() {
@@ -155,6 +177,15 @@ class SearchActivity : AppCompatActivity() {
 
     private fun searchTrack() {
         if (inputEditText.text.isNotEmpty()) {
+
+            // Меняем видимость элементов перед выполнением запроса
+            progressBar.visibility = View.VISIBLE
+            trackRecyclerView.visibility = View.GONE
+            placeholderMessageError.visibility = View.GONE
+            searchError.visibility = View.GONE
+            internetError.visibility = View.GONE
+            buttonUpdate.visibility = View.GONE
+
             trackSearchApi.search(inputEditText.text.toString()).enqueue(object :
                 Callback<TrackResponse> {
                 override fun onResponse(
@@ -164,26 +195,24 @@ class SearchActivity : AppCompatActivity() {
                     if (response.code() == 200) {
                         trackSet.clear()
                         if (response.body()?.results?.isNotEmpty() == true) {
+                            progressBar.visibility = View.GONE // Прячем ProgressBar после успешного выполнения запроса
                             trackRecyclerView.visibility = View.VISIBLE
                             trackSet.addAll(response.body()?.results!!)
                             adapter.notifyDataSetChanged()
                         }
                         if (trackSet.isEmpty()) {
-                            trackRecyclerView.visibility = View.GONE
+                            progressBar.visibility = View.GONE
                             placeholderMessageError.visibility = View.VISIBLE
                             searchError.visibility = View.VISIBLE
-                            internetError.visibility = View.GONE
-                            buttonUpdate.visibility = View.GONE
                             errorMessageText.text = getString(R.string.error_message)
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    trackRecyclerView.visibility = View.GONE
+                    progressBar.visibility = View.GONE // Прячем ProgressBar после выполнения запроса с ошибкой
                     placeholderMessageError.visibility = View.VISIBLE
                     internetError.visibility = View.VISIBLE
-                    searchError.visibility = View.GONE
                     buttonUpdate.visibility = View.VISIBLE
                     errorMessageText.text = getString(R.string.internet_error)
                 }
@@ -209,15 +238,22 @@ class SearchActivity : AppCompatActivity() {
         inputText = savedInstanceState.getString(INPUT_EDIT_TEXT).toString()
     }
 
+    private fun searchDebounce() { //поиск через каждые 2 сек после ввода
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     companion object {
         private const val INPUT_EDIT_TEXT = "INPUT_EDIT_TEXT"
         const val PLAY_TRACK = "PLAY_TRACK"
 
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L //отслеживание строки поля ввода - две секунды с момента последнего его изменения
+
         //функция вызова PlayerActivity для TrackAdapter
         fun startActivity(track: Track, context: Context) {
-            val playerIntent = Intent(context, PlayerActivity::class.java)
-            playerIntent.putExtra(PLAY_TRACK, track) // передаем track в новую активити
-            context.startActivity(playerIntent)
+                val playerIntent = Intent(context, PlayerActivity::class.java)
+                playerIntent.putExtra(PLAY_TRACK, track) // передаем track в новую активити
+                context.startActivity(playerIntent)
         }
     }
 }

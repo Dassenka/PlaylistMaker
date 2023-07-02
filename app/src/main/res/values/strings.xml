@@ -22,5 +22,5 @@
     <string name="releaseDate">Год</string>
     <string name="collectionName">Альбом</string>
     <string name="trackTimeMillis">Длительность</string>
-    <string name="progressTrackTime">00:30</string>
+    <string name="progressTrackTime">00:00</string>
 </resources>

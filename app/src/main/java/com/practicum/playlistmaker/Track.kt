@@ -13,12 +13,13 @@ data class Track(
     val collectionName: String,
     val releaseDate: String,
     val primaryGenreName: String,
-    val country: String
-)    : Serializable
-{
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
+    val country: String,
+    val previewUrl: String
+) : Serializable {
+    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
     fun getYearFromReleaseDate() = releaseDate.trim().substringBefore("-")
 
-    fun trackTimeFormat(): String? = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
+    fun trackTimeFormat(): String? =
+        SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
 }
