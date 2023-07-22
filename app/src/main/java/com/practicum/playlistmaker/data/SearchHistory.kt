@@ -1,7 +1,10 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.data
+
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.presentation.App
+import com.practicum.playlistmaker.domain.model.Track
 
 
 const val HISTORY_PREFERENCES = "history_preferences"

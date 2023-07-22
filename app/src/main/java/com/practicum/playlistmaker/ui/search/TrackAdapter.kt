@@ -1,10 +1,13 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.search
 
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.data.SearchHistory
+import com.practicum.playlistmaker.domain.model.Track
 
 class TrackAdapter(var track: List<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
 

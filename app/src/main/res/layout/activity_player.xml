@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/PlayerBackgroundStyle"
-    tools:context=".PlayerActivity">
+    tools:context=".ui.player.PlayerActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
@@ -137,7 +137,7 @@
         android:id="@+id/buttonPlay"
         style="@style/ButtonPlay"
         android:src="@drawable/ic_play_button"
-        android:enabled="false"
+        android:enabled="true"
         app:layout_constraintBottom_toBottomOf="@+id/horizontal_guideline"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
