@@ -1,0 +1,36 @@
+package com.practicum.playlistmaker
+
+import android.content.Context
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.search.data.dto.TrackDto
+
+
+class LocalStorage(context: Context) {
+    private companion object {
+        const val HISTORY_PREFERENCES = "history_preferences"
+    }
+
+    var historyList = context.getSharedPreferences(HISTORY_PREFERENCES,Context.MODE_PRIVATE)
+
+    fun getTrackHistoryList(): ArrayList<TrackDto> {
+        val getHistory = historyList.getString(HISTORY_PREFERENCES, null)
+        if (!getHistory.isNullOrEmpty()) {
+            val itemType = object : TypeToken<ArrayList<TrackDto>>() {}.type
+            return Gson().fromJson(getHistory, itemType)
+        }
+        return ArrayList<TrackDto>()
+    }
+
+    fun addTrackInHistory(trackHistory: ArrayList<TrackDto>) {
+        historyList.edit()
+            .putString(HISTORY_PREFERENCES, Gson().toJson(trackHistory))
+            .apply()
+    }
+
+    fun clearHistory() {
+        historyList.edit()
+            .remove(HISTORY_PREFERENCES)
+            .apply()
+    }
+    }
