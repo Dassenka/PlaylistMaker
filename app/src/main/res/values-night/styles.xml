@@ -146,21 +146,24 @@
         <item name="android:textFontWeight" tools:targetApi="p">400</item>
     </style>
 
-    <style name="ButtonUpdate" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center</item>
+    <style name="ButtonUpdate" parent="Widget.MaterialComponents.Button">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:layout_marginTop">24dp</item>
-        <item name="android:layout_marginBottom">24dp</item>
-        <item name="android:paddingHorizontal">14dp</item>
-        <item name="android:paddingVertical">10dp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:text">@string/update</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="cornerRadius">54dp</item>
+        <item name="android:textFontWeight" tools:targetApi="p">500</item>
+    </style>
+
+    <style name="ButtonClearHistory" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="cornerRadius">54dp</item>
+        <item name="android:textFontWeight" tools:targetApi="p">500</item>
     </style>
 
     <style name="TrackRecyclerView">

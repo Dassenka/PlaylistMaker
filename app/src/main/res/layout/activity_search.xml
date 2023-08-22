@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/SettingsBackgroundStyle"
-    tools:context=".ui.search.SearchActivity">
+    tools:context=".search.ui.SearchActivity">
 
     <LinearLayout
         android:id="@+id/backToMainActivity"
@@ -62,14 +62,14 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         style="@style/TrackRecyclerView"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/track_card" />
 
     <LinearLayout
         android:id="@+id/placeholder_message_error"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="110dp"
@@ -91,11 +91,16 @@
             style="@style/ErrorMessage"
             tools:text="Some text" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_update"
             style="@style/ButtonUpdate"
             android:text="@string/update"
-            android:visibility="gone" />
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:enabled="true"/>
     </LinearLayout>
 
     <LinearLayout
@@ -120,9 +125,15 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/track_card" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_clear_history"
-            style="@style/ButtonUpdate"
-            android:text="@string/clear_history_button" />
+            style="@style/ButtonClearHistory"
+            android:text="@string/clear_history_button"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            android:enabled="true"/>
     </LinearLayout>
 </LinearLayout>
