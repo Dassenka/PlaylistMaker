@@ -20,8 +20,8 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
     private val handler = Handler(Looper.getMainLooper())
 
 
-    private val stateLiveData = MutableLiveData<SearchActivityScreenState>()
-    fun observeState(): LiveData<SearchActivityScreenState> = stateLiveData
+    private val _stateLiveData = MutableLiveData<SearchActivityScreenState>()
+    fun stateLiveData(): LiveData<SearchActivityScreenState> = _stateLiveData
 
     private var latestSearchText: String? = null
 
@@ -97,7 +97,7 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
 
 
     private fun renderState(state: SearchActivityScreenState) {
-        stateLiveData.postValue(state)
+        _stateLiveData.postValue(state)
     }
 
     companion object {

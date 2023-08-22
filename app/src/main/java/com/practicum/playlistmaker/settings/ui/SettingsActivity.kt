@@ -50,7 +50,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitcher)
 
-        viewModel.observeThemeSettingsLiveData.observe(this) { theme ->
+        viewModel.themeSettingsLiveData.observe(this) { theme ->
             themeSwitcher.isChecked = theme.darkTheme
         }
 

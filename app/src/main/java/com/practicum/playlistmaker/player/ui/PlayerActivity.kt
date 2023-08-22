@@ -57,12 +57,12 @@ class PlayerActivity : AppCompatActivity() {
         )[PlayerViewModel::class.java]
 
         //Подписываемся на состояние плеера ViewModel
-        viewModel.observePlayerState().observe(this) {
+        viewModel.playerStateLiveData().observe(this) {
             render(it)
         }
 
         //Подписываемся на состояние таймера
-        viewModel.getTimerCurrentPosition().observe(this) {
+        viewModel.timerCurrentPositionLiveData().observe(this) {
             changeTime(it)
         }
 

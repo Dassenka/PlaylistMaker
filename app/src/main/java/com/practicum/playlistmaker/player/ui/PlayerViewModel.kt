@@ -24,11 +24,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private var timer = createUpdateTimerTask()
 
-    private var playerStateLiveData = MutableLiveData<PlayerState>()
-    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
+    private var _playerStateLiveData = MutableLiveData<PlayerState>()
+    fun playerStateLiveData(): LiveData<PlayerState> = _playerStateLiveData
 
-    private var timerCurrentPositionLiveData = MutableLiveData<String>()
-    fun getTimerCurrentPosition(): LiveData<String> = timerCurrentPositionLiveData
+    private var _timerCurrentPositionLiveData = MutableLiveData<String>()
+    fun timerCurrentPositionLiveData(): LiveData<String> = _timerCurrentPositionLiveData
 
 
     // функция для подготовки медиаплеера
@@ -36,7 +36,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         mediaPlayerInteractor.preparePlayer(previewUrl) { state ->
             when (state) {
                 PlayerState.STATE_PREPARED, PlayerState.STATE_DEFAULT -> {
-                    playerStateLiveData.postValue(PlayerState.STATE_PREPARED)
+                    _playerStateLiveData.postValue(PlayerState.STATE_PREPARED)
                     timerPause()
                 }
                 else -> {}
@@ -60,8 +60,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
                     "mm:ss",
                     Locale.getDefault()
                 ).format((mediaPlayerInteractor.currentPosition()))
-                mainThreadHandler.postDelayed(this, DELAY)
-                timerCurrentPositionLiveData.postValue(currentPosition)
+                mainThreadHandler.postDelayed(this, DELAY_MS)
+                _timerCurrentPositionLiveData.postValue(currentPosition)
             }
         }
     }
@@ -72,15 +72,15 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
                 PlayerState.STATE_PREPARED, PlayerState.STATE_DEFAULT -> {
                     timerPause()
                     timerStart()
-                    playerStateLiveData.postValue(PlayerState.STATE_PREPARED)
+                    _playerStateLiveData.postValue(PlayerState.STATE_PREPARED)
                 }
                 PlayerState.STATE_PLAYING -> {
                     timerStart()
-                    playerStateLiveData.postValue(PlayerState.STATE_PLAYING)
+                    _playerStateLiveData.postValue(PlayerState.STATE_PLAYING)
                 }
                 PlayerState.STATE_PAUSED -> {
                     timerPause()
-                    playerStateLiveData.postValue(PlayerState.STATE_PAUSED)
+                    _playerStateLiveData.postValue(PlayerState.STATE_PAUSED)
                 }
             }
         }
@@ -89,12 +89,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     fun onPause() {
         timerPause()
         mediaPlayerInteractor.pausePlayer()
-        playerStateLiveData.postValue(PlayerState.STATE_PAUSED)
+        _playerStateLiveData.postValue(PlayerState.STATE_PAUSED)
     }
 
     fun onResume() {
         timerPause()
-        playerStateLiveData.postValue(PlayerState.STATE_PAUSED)
+        _playerStateLiveData.postValue(PlayerState.STATE_PAUSED)
     }
 
     fun onDestroy() {
@@ -103,7 +103,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     companion object {
-        private const val DELAY = 500L
+        private const val DELAY_MS = 500L
 
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {

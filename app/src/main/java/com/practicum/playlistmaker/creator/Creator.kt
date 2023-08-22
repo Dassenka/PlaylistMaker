@@ -24,7 +24,7 @@ object Creator {
 
     private fun getTrackRepository(context: Context): TrackRepository {
         return TrackRepositoryImpl(RetrofitNetworkClient(context),
-            LocalStorage(context),
+            LocalStorage(context.getSharedPreferences("history_preferences", Context.MODE_PRIVATE)),
         )
     }
 

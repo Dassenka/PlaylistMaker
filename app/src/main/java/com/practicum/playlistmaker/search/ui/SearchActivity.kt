@@ -85,7 +85,7 @@ class SearchActivity : AppCompatActivity() {
         )[SearchActivityViewModel::class.java]
 
         //Подписываемся на состояние ViewModel
-        viewModel.observeState().observe(this) {
+        viewModel.stateLiveData().observe(this) {
             render(it)
         }
 

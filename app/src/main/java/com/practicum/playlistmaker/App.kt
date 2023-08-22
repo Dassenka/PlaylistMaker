@@ -7,27 +7,11 @@ import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {
 
-
-
     override fun onCreate() {
         super.onCreate()
         sharedPrefs = getSharedPreferences(DAY_NIGHT_THEME_PREFERENCES, MODE_PRIVATE)
         darkTheme = sharedPrefs.getBoolean(DAY_NIGHT_THEME_KEY, false)
         switchTheme(darkTheme)
-    }
-
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        darkTheme = darkThemeEnabled
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-        sharedPrefs.edit()
-            .putBoolean(DAY_NIGHT_THEME_KEY, darkTheme)
-            .apply()
     }
 
     companion object {
@@ -50,6 +34,5 @@ class App : Application() {
                 .putBoolean(DAY_NIGHT_THEME_KEY, darkTheme)
                 .apply()
         }
-
     }
 }

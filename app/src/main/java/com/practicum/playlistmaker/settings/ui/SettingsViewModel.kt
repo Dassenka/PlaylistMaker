@@ -22,16 +22,16 @@ class SettingsViewModel(
     application: App
 ) : AndroidViewModel(application) {
 
-    private val themeSettingsLiveData = MutableLiveData<ThemeSettings>()
-    val observeThemeSettingsLiveData: LiveData<ThemeSettings> = themeSettingsLiveData
+    private val _themeSettingsLiveData = MutableLiveData<ThemeSettings>()
+    val themeSettingsLiveData: LiveData<ThemeSettings> = _themeSettingsLiveData
 
     init {
-        themeSettingsLiveData.postValue(settingsInteractor.getThemeSettings())
+        _themeSettingsLiveData.postValue(settingsInteractor.getThemeSettings())
     }
 
     fun switchThemeVM(darkThemeEnabled: Boolean) {
         var darkTheme = ThemeSettings(darkThemeEnabled)
-        themeSettingsLiveData.postValue(darkTheme)
+        _themeSettingsLiveData.postValue(darkTheme)
         settingsInteractor.updateThemeSetting(darkTheme)
         App.switchTheme(darkThemeEnabled)
     }
