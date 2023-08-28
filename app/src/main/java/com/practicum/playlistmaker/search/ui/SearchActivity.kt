@@ -16,12 +16,12 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.player.ui.PlayerActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -55,7 +55,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var buttonClearHistory: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var textWatcher: TextWatcher
-    private lateinit var viewModel: SearchActivityViewModel
+    private val viewModel by viewModel<SearchActivityViewModel>()
     private var inputText: String = ""
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
@@ -77,12 +77,6 @@ class SearchActivity : AppCompatActivity() {
         trackRecyclerView = findViewById(R.id.recyclerView)
         searchHistoryRecyclerView = findViewById(R.id.recyclerView_search_history)
         buttonClearHistory = findViewById(R.id.button_clear_history)
-
-        //Создаем ViewModel
-        viewModel = ViewModelProvider(
-            this,
-            SearchActivityViewModel.getViewModelFactory()
-        )[SearchActivityViewModel::class.java]
 
         //Подписываемся на состояние ViewModel
         viewModel.stateLiveData().observe(this) {

@@ -6,19 +6,11 @@ import android.net.NetworkCapabilities
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.TrackSearchRequest
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient(private val context: Context) : NetworkClient {
-
-    private val baseUrl = "http://itunes.apple.com"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val trackSearchApi = retrofit.create(TrackSearchAPI::class.java)
+class RetrofitNetworkClient(
+    private val trackSearchApi: TrackSearchAPI,
+    private val context: Context
+) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (isConnected() == false) {
@@ -28,8 +20,8 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
         if (dto !is TrackSearchRequest) {
             return Response().apply { resultCode = 400 }
         }
-            val response = trackSearchApi.searchTrack(dto.expression).execute()
-            val body = response.body()
+        val response = trackSearchApi.searchTrack(dto.expression).execute()
+        val body = response.body()
 
         return if (body != null) {
             body.apply { resultCode = response.code() }
@@ -40,8 +32,10 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
 
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(
-            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            Context.CONNECTIVITY_SERVICE
+        ) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
             when {
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
@@ -51,7 +45,5 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
         }
         return false
     }
-
-
 }
 

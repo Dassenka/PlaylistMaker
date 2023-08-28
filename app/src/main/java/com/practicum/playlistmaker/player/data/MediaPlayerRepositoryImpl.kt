@@ -4,9 +4,7 @@ import android.media.MediaPlayer
 import com.practicum.playlistmaker.player.domain.MediaPlayerRepository
 
 
-class MediaPlayerRepositoryImpl() : MediaPlayerRepository {
-
-    private val mediaPlayer = MediaPlayer()
+class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : MediaPlayerRepository {
 
     override fun release() {
         mediaPlayer.release()

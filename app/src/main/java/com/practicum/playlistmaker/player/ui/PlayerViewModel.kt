@@ -1,24 +1,17 @@
 package com.practicum.playlistmaker.player.ui
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.creator.Creator
+import androidx.lifecycle.ViewModel
+import com.practicum.playlistmaker.player.domain.MediaPlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.PlayerState
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val mediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
+class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
 
     // Создаём Handler, привязанный к ГЛАВНОМУ потоку для отсчета времени
     private val mainThreadHandler = Handler(Looper.getMainLooper())
@@ -29,7 +22,6 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
     private var _timerCurrentPositionLiveData = MutableLiveData<String>()
     fun timerCurrentPositionLiveData(): LiveData<String> = _timerCurrentPositionLiveData
-
 
     // функция для подготовки медиаплеера
     fun preparePlayer(previewUrl: String) {
@@ -104,11 +96,5 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
     companion object {
         private const val DELAY_MS = 500L
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
 }
