@@ -1,22 +1,16 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.creator.Creator
+import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.search.domain.api.TrackInteractor
 import com.practicum.playlistmaker.search.domain.model.Track
 
-class SearchActivityViewModel(application: Application) : AndroidViewModel(application) {
+class SearchActivityViewModel(private val trackInteractor: TrackInteractor) : ViewModel() {
 
-    private val trackInteractor = Creator.provideTrackInteractor(getApplication())
     private val handler = Handler(Looper.getMainLooper())
 
 
@@ -30,7 +24,7 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
-    fun searchDebounce(changedText: String, hasError :Boolean) {
+    fun searchDebounce(changedText: String, hasError: Boolean) {
         if (latestSearchText == changedText && !hasError) {
             return
         }
@@ -67,7 +61,7 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
                                 renderState(SearchActivityScreenState.Content(tracks))
                             }
                         }
-                    }else{
+                    } else {
                         renderState(SearchActivityScreenState.Error())
                     }
                 }
@@ -75,23 +69,23 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun getHistoryList(){
-        trackInteractor.getTrackHistoryList(object : TrackInteractor.HistoryTrackConsumer{
-            override fun consume(savedTrack: List<Track>?){
-                if (savedTrack != null){
+    fun getHistoryList() {
+        trackInteractor.getTrackHistoryList(object : TrackInteractor.HistoryTrackConsumer {
+            override fun consume(savedTrack: List<Track>?) {
+                if (savedTrack != null) {
                     renderState(SearchActivityScreenState.ContentHistoryList(savedTrack))
-                }else{
+                } else {
                     renderState(SearchActivityScreenState.EmptyHistoryList())
                 }
             }
         })
     }
 
-    fun addTrackInHistory(track: Track){
+    fun addTrackInHistory(track: Track) {
         trackInteractor.addTrackInHistory(track)
     }
 
-    fun clearHistory(){
+    fun clearHistory() {
         trackInteractor.clearHistory()
     }
 
@@ -103,11 +97,5 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchActivityViewModel(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application)
-            }
-        }
     }
 }

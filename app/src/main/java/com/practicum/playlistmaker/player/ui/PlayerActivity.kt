@@ -7,18 +7,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.domain.model.PlayerState
 import com.practicum.playlistmaker.search.ui.SearchActivity
 import com.practicum.playlistmaker.search.domain.model.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var track: Track
     private lateinit var trackName: TextView
     private lateinit var artistName: TextView
@@ -49,12 +49,6 @@ class PlayerActivity : AppCompatActivity() {
         buttonPlay = findViewById(R.id.buttonPlay)
 
         track = intent.getSerializableExtra(SearchActivity.PLAY_TRACK) as Track
-
-        //Создаем ViewModel
-        viewModel = ViewModelProvider(
-            this,
-            PlayerViewModel.getViewModelFactory()
-        )[PlayerViewModel::class.java]
 
         //Подписываемся на состояние плеера ViewModel
         viewModel.playerStateLiveData().observe(this) {

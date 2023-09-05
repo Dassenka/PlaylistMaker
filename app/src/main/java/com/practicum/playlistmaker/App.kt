@@ -1,38 +1,21 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.di.dataModule
+import com.practicum.playlistmaker.di.interactorModule
+import com.practicum.playlistmaker.di.repositoryModule
+import com.practicum.playlistmaker.di.viewModelModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext.startKoin
 
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        sharedPrefs = getSharedPreferences(DAY_NIGHT_THEME_PREFERENCES, MODE_PRIVATE)
-        darkTheme = sharedPrefs.getBoolean(DAY_NIGHT_THEME_KEY, false)
-        switchTheme(darkTheme)
-    }
-
-    companion object {
-        const val DAY_NIGHT_THEME_PREFERENCES = "preferences"
-        const val DAY_NIGHT_THEME_KEY = "key"
-        lateinit var sharedPrefs: SharedPreferences
-
-        var darkTheme = false
-
-        fun switchTheme(darkThemeEnabled: Boolean) {
-            darkTheme = darkThemeEnabled
-            AppCompatDelegate.setDefaultNightMode(
-                if (darkThemeEnabled) {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_NO
-                }
-            )
-            sharedPrefs.edit()
-                .putBoolean(DAY_NIGHT_THEME_KEY, darkTheme)
-                .apply()
+        startKoin {
+            androidContext(this@App)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
     }
 }

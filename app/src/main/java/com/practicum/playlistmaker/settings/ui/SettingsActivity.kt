@@ -5,22 +5,17 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.R
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by viewModel<SettingsViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.getViewModelFactory(this)
-        )[SettingsViewModel::class.java]
 
         val back: LinearLayout = findViewById(R.id.backToMainActivity)
         back.setOnClickListener {
@@ -30,7 +25,6 @@ class SettingsActivity : AppCompatActivity() {
         val share = findViewById<TextView>(R.id.share)
         share.setOnClickListener {
             viewModel.shareLink(getString(R.string.android_address))
-
         }
 
         val support = findViewById<TextView>(R.id.support)

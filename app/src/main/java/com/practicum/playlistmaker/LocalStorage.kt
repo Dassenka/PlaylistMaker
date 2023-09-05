@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker
 
-import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -8,8 +7,6 @@ import com.practicum.playlistmaker.search.data.dto.TrackDto
 
 
 class LocalStorage(private val sharedPreferences: SharedPreferences) {
-
-    //var historyList = context.getSharedPreferences(HISTORY_PREFERENCES,Context.MODE_PRIVATE)
 
     fun getTrackHistoryList(): ArrayList<TrackDto> {
         val getHistory = sharedPreferences.getString(HISTORY_PREFERENCES, null)
@@ -35,4 +32,4 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
     private companion object {
         const val HISTORY_PREFERENCES = "history_preferences"
     }
-    }
+}

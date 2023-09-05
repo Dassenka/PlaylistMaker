@@ -10,6 +10,7 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
     override fun shareLink(getShareAppLink: String) {
         Intent(Intent.ACTION_SEND).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, getShareAppLink)
             context.startActivity(this)
@@ -18,6 +19,7 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
     override fun openLink(getTermsLink: String) {
         val agreementIntent = Intent(Intent.ACTION_VIEW).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             data = Uri.parse(getTermsLink)
         }
         context.startActivity(agreementIntent)
@@ -25,6 +27,7 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
     override fun openEmail(getSupportEmailData: EmailData) {
         Intent(Intent.ACTION_SENDTO).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(getSupportEmailData.supportAddress))
             putExtra(Intent.EXTRA_SUBJECT, getSupportEmailData.supportTheme)
