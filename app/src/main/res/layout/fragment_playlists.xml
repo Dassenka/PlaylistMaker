@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/placeholder_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_add_playlists"
+            style="@style/ButtonUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:enabled="true"
+            android:text="@string/button_add_playlists"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/search_error"
+            style="@style/SearchError"
+            android:layout_marginTop="48dp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/error_message"
+            style="@style/ErrorMessage"
+            android:text="@string/empty_playlists"
+            android:visibility="visible" />
+
+    </LinearLayout>
+</FrameLayout>

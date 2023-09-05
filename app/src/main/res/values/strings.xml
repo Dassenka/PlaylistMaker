@@ -23,4 +23,10 @@
     <string name="collectionName">Альбом</string>
     <string name="trackTimeMillis">Длительность</string>
     <string name="progressTrackTime">00:00</string>
+    <string name="empty_favorite_tracks">Ваша медиатека пуста</string>
+    <string name="empty_playlists">Вы не создали\nни одного плейлиста</string>
+    <string name="button_add_playlists">Новый плейлист</string>
+    <string name="favorite_tracks">Избранные треки</string>
+    <string name="favorite_playlists">Плейлисты</string>
+
 </resources>

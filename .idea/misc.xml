@@ -12,9 +12,13 @@
         <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/drawable/searh_field.xml" value="0.2285" />
         <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout-v28/activity_player.xml" value="0.3078125" />
         <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/activity_media_lib.xml" value="0.2175925925925926" />
         <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/activity_player.xml" value="0.25" />
         <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/activity_search.xml" value="0.17037037037037037" />
         <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/activity_settings.xml" value="0.32228915662650603" />
+        <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/fragment_favorite_tracks.xml" value="0.1548523206751055" />
+        <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/fragment_favorites_tracks.xml" value="0.2175925925925926" />
+        <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/fragment_playlists.xml" value="0.2175925925925926" />
         <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/player.xml" value="0.33" />
         <entry key="..\:/Android/AndroidStudioProjects/PlaylistMaker/app/src/main/res/layout/track_card.xml" value="0.33" />
       </map>

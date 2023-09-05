@@ -21,4 +21,7 @@
     <dimen name="margin_back_to_search_button">4dp</dimen>
     <dimen name="progressbar_size">44dp</dimen>
     <dimen name="margin_top_progressbar">148dp</dimen>
+    <dimen name="section_margin">24dp</dimen>
+    <dimen name="text_pager_adapter">14sp</dimen>
+
 </resources>
