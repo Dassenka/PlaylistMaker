@@ -16,7 +16,6 @@ class MediaLibActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaLibBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //setContentView(R.layout.activity_media_lib)
 
         binding.backToMainActivity.setOnClickListener {
             finish()
