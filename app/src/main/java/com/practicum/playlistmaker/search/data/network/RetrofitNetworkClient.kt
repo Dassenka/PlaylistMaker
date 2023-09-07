@@ -13,7 +13,7 @@ class RetrofitNetworkClient(
 ) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
-        if (isConnected() == false) {
+        if (!isConnected()) {
             return Response().apply { resultCode = -1 }
         }
 

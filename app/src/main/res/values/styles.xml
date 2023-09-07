@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+
     <style name="MainActivityBackgroundStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
@@ -235,5 +236,26 @@
         <item name="android:tint">@color/black</item>
     </style>
 
+    <style name="MediaLibBackgroundStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="MediaTabLayoutStyle">
+        <item name="android:background">@color/white</item>
+        <item name="tabIndicatorColor">@color/black</item>
+        <item name="tabRippleColor">@color/black</item>
+        <item name="tabTextColor">@color/black</item>
+        <item name="tabTextAppearance">@style/MediaTabLayoutTextStyle</item>
+    </style>
+
+    <style name="MediaTabLayoutTextStyle">
+        <item name="textAllCaps">false</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+        <item name="android:textSize">@dimen/text_pager_adapter</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+    </style>
 
 </resources>
