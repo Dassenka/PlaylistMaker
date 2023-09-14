@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/MediaLibBackgroundStyle"
-    tools:context=".lib.ui.MediaLibActivity">
+    tools:context=".lib.ui.MediaLibFragment"
+    android:id="@+id/mediaLibFragment">
 
     <LinearLayout
         android:id="@+id/backToMainActivity"
         android:layout_width="match_parent"
         android:layout_height="56dp">
-
-        <ImageView
-            style="@style/BackMainActivityStyle"
-            android:layout_marginStart="@dimen/padding_for_settings"
-            android:layout_marginTop="@dimen/padding_for_settings"
-            android:src="@drawable/ic_arrow_back" />
 
         <TextView
             style="@style/BackMainActivityStyle"

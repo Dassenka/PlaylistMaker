@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/SettingsBackgroundStyle"
-    tools:context=".search.ui.SearchActivity">
+    tools:context=".search.ui.SearchFragment"
+    android:id="@+id/searchFragment">
 
     <LinearLayout
         android:id="@+id/backToMainActivity"
@@ -11,12 +12,6 @@
         android:layout_height="64dp"
         android:orientation="horizontal"
         tools:ignore="MissingConstraints">
-
-        <ImageView
-            style="@style/BackMainActivityStyle"
-            android:layout_marginStart="@dimen/padding_for_settings"
-            android:layout_marginTop="@dimen/padding_for_settings"
-            android:src="@drawable/ic_arrow_back" />
 
         <TextView
             style="@style/BackMainActivityStyle"
@@ -67,7 +62,7 @@
         tools:listitem="@layout/track_card" />
 
     <LinearLayout
-        android:id="@+id/placeholder_message_error"
+        android:id="@+id/placeholderMessageError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -77,22 +72,22 @@
         android:visibility="gone">
 
         <ImageView
-            android:id="@+id/internet_error"
+            android:id="@+id/internetError"
             style="@style/InternetError"
             android:visibility="gone" />
 
         <ImageView
-            android:id="@+id/search_error"
+            android:id="@+id/searchError"
             style="@style/SearchError"
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/error_message"
+            android:id="@+id/errorMessage"
             style="@style/ErrorMessage"
             tools:text="Some text" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_update"
+            android:id="@+id/buttonUpdate"
             style="@style/ButtonUpdate"
             android:text="@string/update"
             android:visibility="visible"
@@ -104,7 +99,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/search_history"
+        android:id="@+id/searchHistory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -119,14 +114,14 @@
             android:textFontWeight="400" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_search_history"
+            android:id="@+id/recyclerViewSearchHistory"
             style="@style/TrackRecyclerView"
             android:layout_weight="1"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/track_card" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_clear_history"
+            android:id="@+id/buttonClearHistory"
             style="@style/ButtonClearHistory"
             android:text="@string/clear_history_button"
             android:visibility="visible"
