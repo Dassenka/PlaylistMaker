@@ -14,16 +14,18 @@ class SettingsRepositoryImpl(private val sharedPrefs: SharedPreferences) : Setti
     }
 
     override fun updateThemeSetting(settings: ThemeSettings) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (settings.darkTheme) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-        sharedPrefs.edit()
-            .putBoolean(DAY_NIGHT_THEME_KEY, settings.darkTheme)
-            .apply()
+
+        if (settings.darkTheme){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            sharedPrefs.edit()
+                .putBoolean(DAY_NIGHT_THEME_KEY, true)
+                .apply()
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            sharedPrefs.edit()
+                .putBoolean(DAY_NIGHT_THEME_KEY, false)
+                .apply()
+        }
     }
 
     companion object {

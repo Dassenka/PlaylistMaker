@@ -62,7 +62,7 @@
         tools:listitem="@layout/track_card" />
 
     <LinearLayout
-        android:id="@+id/placeholderMessageError"
+        android:id="@+id/placeHolderMessageError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

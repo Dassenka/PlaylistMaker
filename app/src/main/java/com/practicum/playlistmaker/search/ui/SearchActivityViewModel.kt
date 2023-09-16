@@ -72,13 +72,26 @@ class SearchActivityViewModel(private val trackInteractor: TrackInteractor) : Vi
     fun getHistoryList() {
         trackInteractor.getTrackHistoryList(object : TrackInteractor.HistoryTrackConsumer {
             override fun consume(savedTrack: List<Track>?) {
+
                 if (savedTrack != null) {
-                    renderState(SearchActivityScreenState.ContentHistoryList(savedTrack))
+                    when (savedTrack.isEmpty()) {
+                        true -> {
+                            renderState(SearchActivityScreenState.EmptyHistoryList())
+                        }
+                        else -> {
+                            renderState(SearchActivityScreenState.ContentHistoryList(savedTrack))
+                        }
+                    }
+
                 } else {
                     renderState(SearchActivityScreenState.EmptyHistoryList())
                 }
             }
         })
+    }
+
+    fun emptyHistoryList() {
+        renderState(SearchActivityScreenState.EmptyHistoryList())
     }
 
     fun addTrackInHistory(track: Track) {
@@ -88,7 +101,6 @@ class SearchActivityViewModel(private val trackInteractor: TrackInteractor) : Vi
     fun clearHistory() {
         trackInteractor.clearHistory()
     }
-
 
     private fun renderState(state: SearchActivityScreenState) {
         _stateLiveData.postValue(state)

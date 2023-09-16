@@ -28,7 +28,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
 
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private val adapter = TrackAdapter(
         object : TrackAdapter.TrackClickListener {
@@ -64,8 +65,12 @@ class SearchFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,7 +81,7 @@ class SearchFragment : Fragment() {
         inputEditText = binding.InputEditText
         clearButton = binding.clearIcon
         searchHistoryLay = binding.searchHistory
-        placeholderMessageError = binding.placeholderMessageError
+        placeholderMessageError = binding.placeHolderMessageError
         searchError = binding.searchError
         internetError = binding.internetError
         buttonUpdate = binding.buttonUpdate
@@ -114,7 +119,7 @@ class SearchFragment : Fragment() {
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && inputEditText.text.isEmpty()) {
                 viewModel.getHistoryList()
-            } else searchHistoryLay.visibility = View.GONE
+            }
         }
 
         textWatcher = object : TextWatcher {
@@ -123,19 +128,18 @@ class SearchFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.getHistoryList()
                 placeholderMessageError.visibility = View.GONE
                 clearButton.visibility = clearButtonVisibility(s)
                 viewModel.searchDebounce(changedText = s?.toString() ?: inputText, false)
 
-                trackRecyclerView.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true)
-                        View.GONE else View.VISIBLE // скрываем список найденных трэков
+                if (inputEditText.hasFocus() && s?.isEmpty() == true){
+                    viewModel.getHistoryList()
+                    trackRecyclerView.visibility = View.GONE
+                }else{
+                    viewModel.emptyHistoryList()
+                    trackRecyclerView.visibility = View.VISIBLE
 
-                searchHistoryLay.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true)
-                        View.VISIBLE else View.GONE
-
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -160,6 +164,7 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         textWatcher?.let { inputEditText.removeTextChangedListener(it) }
     }
 
@@ -238,6 +243,9 @@ class SearchFragment : Fragment() {
 
     private fun showEmptyHistoryList() {
         searchHistoryLay.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        placeholderMessageError.visibility = View.GONE
+        trackRecyclerView.visibility = View.GONE
 
     }
 
