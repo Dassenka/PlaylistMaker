@@ -1,13 +1,15 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -15,15 +17,19 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerActivity
+import com.practicum.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
+
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private val adapter = TrackAdapter(
         object : TrackAdapter.TrackClickListener {
@@ -41,7 +47,6 @@ class SearchActivity : AppCompatActivity() {
         }
     )
 
-    private lateinit var backButton: LinearLayout
     private lateinit var clearButton: ImageView
     private lateinit var inputEditText: EditText
     private lateinit var trackRecyclerView: RecyclerView
@@ -60,42 +65,44 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        progressBar = findViewById(R.id.progressBar)
-        backButton = findViewById(R.id.backToMainActivity)
-        inputEditText = findViewById(R.id.InputEditText)
-        clearButton = findViewById(R.id.clearIcon)
-        searchHistoryLay = findViewById(R.id.search_history)
-        placeholderMessageError = findViewById(R.id.placeholder_message_error)
-        searchError = findViewById(R.id.search_error)
-        internetError = findViewById(R.id.internet_error)
-        buttonUpdate = findViewById(R.id.button_update)
-        errorMessageText = findViewById(R.id.error_message)
-        trackRecyclerView = findViewById(R.id.recyclerView)
-        searchHistoryRecyclerView = findViewById(R.id.recyclerView_search_history)
-        buttonClearHistory = findViewById(R.id.button_clear_history)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        progressBar = binding.progressBar
+        inputEditText = binding.InputEditText
+        clearButton = binding.clearIcon
+        searchHistoryLay = binding.searchHistory
+        placeholderMessageError = binding.placeHolderMessageError
+        searchError = binding.searchError
+        internetError = binding.internetError
+        buttonUpdate = binding.buttonUpdate
+        errorMessageText = binding.errorMessage
+        trackRecyclerView = binding.recyclerView
+        searchHistoryRecyclerView = binding.recyclerViewSearchHistory
+        buttonClearHistory = binding.buttonClearHistory
 
         //Подписываемся на состояние ViewModel
-        viewModel.stateLiveData().observe(this) {
+        viewModel.stateLiveData().observe(viewLifecycleOwner) {
             render(it)
-        }
-
-        //Кнопка назад
-        backButton.setOnClickListener {
-            finish()
         }
 
         //список найденных трэков
         trackRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         trackRecyclerView.adapter = adapter
 
         //список трэков из истории прослушанных
         searchHistoryRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         searchHistoryRecyclerView.adapter = adapterHistory
 
         //Очистка поля ввода
@@ -112,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && inputEditText.text.isEmpty()) {
                 viewModel.getHistoryList()
-            } else searchHistoryLay.visibility = View.GONE
+            }
         }
 
         textWatcher = object : TextWatcher {
@@ -121,19 +128,18 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.getHistoryList()
                 placeholderMessageError.visibility = View.GONE
                 clearButton.visibility = clearButtonVisibility(s)
                 viewModel.searchDebounce(changedText = s?.toString() ?: inputText, false)
 
-                trackRecyclerView.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true)
-                        View.GONE else View.VISIBLE // скрываем список найденных трэков
+                if (inputEditText.hasFocus() && s?.isEmpty() == true){
+                    viewModel.getHistoryList()
+                    trackRecyclerView.visibility = View.GONE
+                }else{
+                    viewModel.emptyHistoryList()
+                    trackRecyclerView.visibility = View.VISIBLE
 
-                searchHistoryLay.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true)
-                        View.VISIBLE else View.GONE
-
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -156,8 +162,9 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
         textWatcher?.let { inputEditText.removeTextChangedListener(it) }
     }
 
@@ -173,7 +180,7 @@ class SearchActivity : AppCompatActivity() {
     //функция скрытия клавиатуры
     private fun hideKeyBoard() {
         val inputMethodManager =
-            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(inputEditText.windowToken, 0)
     }
 
@@ -236,6 +243,9 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showEmptyHistoryList() {
         searchHistoryLay.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        placeholderMessageError.visibility = View.GONE
+        trackRecyclerView.visibility = View.GONE
 
     }
 
@@ -253,7 +263,7 @@ class SearchActivity : AppCompatActivity() {
     fun startActivity(track: Track) {
         if (clickDebounce()) {
             viewModel.addTrackInHistory(track) //функция добавления трэка в историю
-            val intent = Intent(this@SearchActivity, PlayerActivity::class.java)
+            val intent = Intent(requireContext(), PlayerActivity::class.java)
             intent.putExtra(PLAY_TRACK, track)
             startActivity(intent)
         }

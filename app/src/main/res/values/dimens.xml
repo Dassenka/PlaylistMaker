@@ -23,5 +23,6 @@
     <dimen name="margin_top_progressbar">148dp</dimen>
     <dimen name="section_margin">24dp</dimen>
     <dimen name="text_pager_adapter">14sp</dimen>
+    <dimen name="text_size_bottom_nav">12sp</dimen>
 
 </resources>

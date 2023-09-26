@@ -7,32 +7,25 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.practicum.playlistmaker.App"
+        android:name=".App"
         android:allowBackup="true"
+        android:configChanges="uiMode"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        android:theme="@style/Theme.PlaylistMaker"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.practicum.playlistmaker.player.ui.PlayerActivity"
-            android:exported="true" />
-        <activity
-            android:name="com.practicum.playlistmaker.settings.ui.SettingsActivity"
+            android:name=".player.ui.PlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".search.ui.SearchActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.practicum.playlistmaker.lib.ui.MediaLibActivity"
-            android:exported="false" />
-        <activity
-            android:name=".main.ui.MainActivity"
-            android:exported="true">
+            android:name=".main.ui.RootActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
