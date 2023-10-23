@@ -3,8 +3,6 @@ package com.practicum.playlistmaker.search.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -18,12 +16,15 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -62,7 +63,6 @@ class SearchFragment : Fragment() {
     private lateinit var textWatcher: TextWatcher
     private val viewModel by viewModel<SearchActivityViewModel>()
     private var inputText: String = ""
-    private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
     override fun onCreateView(
@@ -132,10 +132,10 @@ class SearchFragment : Fragment() {
                 clearButton.visibility = clearButtonVisibility(s)
                 viewModel.searchDebounce(changedText = s?.toString() ?: inputText, false)
 
-                if (inputEditText.hasFocus() && s?.isEmpty() == true){
+                if (inputEditText.hasFocus() && s?.isEmpty() == true) {
                     viewModel.getHistoryList()
                     trackRecyclerView.visibility = View.GONE
-                }else{
+                } else {
                     viewModel.emptyHistoryList()
                     trackRecyclerView.visibility = View.VISIBLE
 
@@ -254,7 +254,11 @@ class SearchFragment : Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+
+            lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }

@@ -8,48 +8,54 @@ import com.practicum.playlistmaker.search.data.dto.TrackSearchRequest
 import com.practicum.playlistmaker.search.data.dto.TrackSearchResponse
 import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 const val HISTORY_SIZE = 10
 
-class TrackRepositoryImpl(private val networkClient: NetworkClient,
-                          private val localStorage: LocalStorage) : TrackRepository {
+class TrackRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val localStorage: LocalStorage
+) : TrackRepository {
 
 
-
-    override fun searchTrack(expression: String): ResponseStatus<List<Track>> {
+    override fun searchTrack(expression: String): Flow<ResponseStatus<List<Track>>> = flow {
 
         val response = networkClient.doRequest(TrackSearchRequest(expression))
 
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                ResponseStatus.Error(true)
+                emit(ResponseStatus.Error(true))
             }
 
 
             200 -> {
-                ResponseStatus.Success((response as TrackSearchResponse).results.map {
-                    Track(
-                        it.trackName,
-                        it.artistName,
-                        it.trackTimeMillis,
-                        it.artworkUrl100,
-                        it.trackId,
-                        it.collectionName,
-                        it.releaseDate,
-                        it.primaryGenreName,
-                        it.country,
-                        it.previewUrl,
-                    )
-                })
+                with(response as TrackSearchResponse) {
+                    val data = results.map {
+                        Track(
+                            it.trackName,
+                            it.artistName,
+                            it.trackTimeMillis,
+                            it.artworkUrl100,
+                            it.trackId,
+                            it.collectionName,
+                            it.releaseDate,
+                            it.primaryGenreName,
+                            it.country,
+                            it.previewUrl,
+                        )
+                    }
+                    emit(ResponseStatus.Success(data))
+                }
             }
             else -> {
-                ResponseStatus.Error( true)
+                emit(ResponseStatus.Error(true))
 
             }
         }
     }
 
-    override fun getTrackHistoryList(): List<Track>{
+    override fun getTrackHistoryList(): List<Track> {
         var historyList = localStorage.getTrackHistoryList().map {
             Track(
                 it.trackName,
@@ -68,7 +74,8 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient,
     }
 
     override fun addTrackInHistory(track: Track) {
-        var trackDto = TrackDto(track.trackName,
+        var trackDto = TrackDto(
+            track.trackName,
             track.artistName,
             track.trackTimeMillis,
             track.artworkUrl100,
@@ -77,12 +84,14 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient,
             track.releaseDate,
             track.primaryGenreName,
             track.country,
-            track.previewUrl)
+            track.previewUrl
+        )
 
         var historyListDto: ArrayList<TrackDto> = localStorage.getTrackHistoryList()
 
         if (historyListDto.contains(trackDto)) {
-            historyListDto.remove(trackDto)}
+            historyListDto.remove(trackDto)
+        }
 
         historyListDto.add(0, trackDto)
 
@@ -92,7 +101,7 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient,
         localStorage.addTrackInHistory(historyListDto)
     }
 
-    override fun clearHistory(){
+    override fun clearHistory() {
         localStorage.clearHistory()
     }
 }

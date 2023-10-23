@@ -239,6 +239,5 @@
         <item name="android:background">@color/white</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/text_size_bottom_nav</item>
-
     </style>
 </resources>
