@@ -22,8 +22,8 @@ class TrackInteractorImpl(private val repository: TrackRepository) : TrackIntera
         }
     }
 
-    override fun getTrackHistoryList(consumer: TrackInteractor.HistoryTrackConsumer) {
-        consumer.consume(repository.getTrackHistoryList())
+    override fun getTrackHistoryList(): List<Track>{
+        return repository.getTrackHistoryList()
     }
 
     override fun addTrackInHistory(track: Track) {

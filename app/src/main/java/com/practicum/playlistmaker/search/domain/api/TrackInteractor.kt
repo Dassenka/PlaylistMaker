@@ -5,11 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrackInteractor {
     fun searchTrack(expression: String) : Flow<Pair<List<Track>?, Boolean?>>
-    fun getTrackHistoryList(consumer: HistoryTrackConsumer)
+    fun getTrackHistoryList(): List<Track>
     fun addTrackInHistory(track: Track)
     fun clearHistory()
-
-    interface HistoryTrackConsumer {
-        fun consume(savedTrack: List<Track>?)
-    }
 }
