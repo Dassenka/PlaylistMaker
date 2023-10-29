@@ -1,21 +1,21 @@
 package com.practicum.playlistmaker.player.ui
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.player.domain.MediaPlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.PlayerState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
 
-    // Создаём Handler, привязанный к ГЛАВНОМУ потоку для отсчета времени
-    private val mainThreadHandler = Handler(Looper.getMainLooper())
-    private var timer = createUpdateTimerTask()
+    private var timerJob: Job? = null
 
     private var _playerStateLiveData = MutableLiveData<PlayerState>()
     fun playerStateLiveData(): LiveData<PlayerState> = _playerStateLiveData
@@ -36,26 +36,22 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) 
         }
     }
 
-    private fun timerStart() {
-        mainThreadHandler.post(timer)
+    private fun timerStart(state: PlayerState) {
+        timerJob = viewModelScope.launch {
+            while (state == PlayerState.STATE_PLAYING) {
+                delay(DELAY_MS)
+                _timerCurrentPositionLiveData.postValue(currentPosition())
+            }
+        }
     }
 
     private fun timerPause() {
-        mainThreadHandler.removeCallbacks(timer)
+        timerJob?.cancel()
     }
 
     //таймер проигрывателя
-    private fun createUpdateTimerTask(): Runnable {
-        return object : Runnable {
-            override fun run() {
-                var currentPosition = SimpleDateFormat(
-                    "mm:ss",
-                    Locale.getDefault()
-                ).format((mediaPlayerInteractor.currentPosition()))
-                mainThreadHandler.postDelayed(this, DELAY_MS)
-                _timerCurrentPositionLiveData.postValue(currentPosition)
-            }
-        }
+    private fun currentPosition(): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format((mediaPlayerInteractor.currentPosition())) ?: "00:00"
     }
 
     fun playerState() {
@@ -63,11 +59,11 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) 
             when (state) {
                 PlayerState.STATE_PREPARED, PlayerState.STATE_DEFAULT -> {
                     timerPause()
-                    timerStart()
+                    timerStart(PlayerState.STATE_PLAYING)
                     _playerStateLiveData.postValue(PlayerState.STATE_PREPARED)
                 }
                 PlayerState.STATE_PLAYING -> {
-                    timerStart()
+                    timerStart(PlayerState.STATE_PLAYING)
                     _playerStateLiveData.postValue(PlayerState.STATE_PLAYING)
                 }
                 PlayerState.STATE_PAUSED -> {
@@ -95,6 +91,6 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) 
     }
 
     companion object {
-        private const val DELAY_MS = 500L
+        private const val DELAY_MS = 300L
     }
 }

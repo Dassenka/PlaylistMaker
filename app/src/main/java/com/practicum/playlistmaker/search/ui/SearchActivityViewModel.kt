@@ -1,28 +1,23 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.search.domain.api.TrackInteractor
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchActivityViewModel(private val trackInteractor: TrackInteractor) : ViewModel() {
-
-    private val handler = Handler(Looper.getMainLooper())
-
 
     private val _stateLiveData = MutableLiveData<SearchActivityScreenState>()
     fun stateLiveData(): LiveData<SearchActivityScreenState> = _stateLiveData
 
     private var latestSearchText: String? = null
 
-    //onDestroy
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
+    private var searchJob: Job? = null
 
     fun searchDebounce(changedText: String, hasError: Boolean) {
         if (latestSearchText == changedText && !hasError) {
@@ -30,64 +25,61 @@ class SearchActivityViewModel(private val trackInteractor: TrackInteractor) : Vi
         }
 
         this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(changedText)
+        }
     }
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
             renderState(SearchActivityScreenState.Loading)
 
-            trackInteractor.searchTrack(newSearchText, object : TrackInteractor.TrackConsumer {
-                override fun consume(foundTracks: List<Track>?, hasError: Boolean?) {
-                    val tracks = mutableListOf<Track>()
-
-                    if (foundTracks != null) {
-                        tracks.addAll(foundTracks)
-
-                        when {
-                            tracks.isEmpty() -> {
-                                renderState(SearchActivityScreenState.Empty())
-                            }
-                            tracks.isNotEmpty() -> {
-                                renderState(SearchActivityScreenState.Content(tracks))
-                            }
-                        }
-                    } else {
-                        renderState(SearchActivityScreenState.Error())
+            viewModelScope.launch {
+                trackInteractor
+                    .searchTrack(newSearchText)
+                    .collect { pair ->
+                        processResult(pair.first, pair.second)
                     }
+            }
+        }
+    }
+
+    private fun processResult(foundTracks: List<Track>?, hasError: Boolean?) {
+        val tracks = mutableListOf<Track>()
+
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks)
+
+            when {
+                tracks.isEmpty() -> {
+                    renderState(SearchActivityScreenState.Empty())
                 }
-            })
+                tracks.isNotEmpty() -> {
+                    renderState(SearchActivityScreenState.Content(tracks))
+                }
+            }
+        } else {
+            renderState(SearchActivityScreenState.Error())
         }
     }
 
     fun getHistoryList() {
-        trackInteractor.getTrackHistoryList(object : TrackInteractor.HistoryTrackConsumer {
-            override fun consume(savedTrack: List<Track>?) {
-
-                if (savedTrack != null) {
-                    when (savedTrack.isEmpty()) {
-                        true -> {
-                            renderState(SearchActivityScreenState.EmptyHistoryList())
-                        }
-                        else -> {
-                            renderState(SearchActivityScreenState.ContentHistoryList(savedTrack))
-                        }
-                    }
-
-                } else {
+        val savedTrack = trackInteractor.getTrackHistoryList()
+        if (savedTrack != null) {
+            when (savedTrack.isEmpty()) {
+                true -> {
                     renderState(SearchActivityScreenState.EmptyHistoryList())
                 }
+                else -> {
+                    renderState(SearchActivityScreenState.ContentHistoryList(savedTrack))
+                }
             }
-        })
+        } else {
+            renderState(SearchActivityScreenState.EmptyHistoryList())
+        }
     }
 
     fun emptyHistoryList() {
@@ -108,6 +100,5 @@ class SearchActivityViewModel(private val trackInteractor: TrackInteractor) : Vi
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
 }

@@ -19,7 +19,4 @@
 
     <color name="input_background_tint">#E6E8EB</color>
     <color name="input_hint_tint">#AEAFB4</color>
-    track_night
-    thumb_night
-
 </resources>
