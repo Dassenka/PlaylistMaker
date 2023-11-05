@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.search.data
 
 import com.practicum.playlistmaker.LocalStorage
 import com.practicum.playlistmaker.ResponseStatus
+import com.practicum.playlistmaker.favorite.data.db.AppDatabase
 import com.practicum.playlistmaker.search.data.dto.TrackDto
 import com.practicum.playlistmaker.search.data.dto.TrackSearchRequest
 import com.practicum.playlistmaker.search.data.dto.TrackSearchResponse
@@ -15,7 +16,8 @@ const val HISTORY_SIZE = 10
 
 class TrackRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val localStorage: LocalStorage
+    private val localStorage: LocalStorage,
+    private val appDatabase: AppDatabase,
 ) : TrackRepository {
 
 
@@ -45,6 +47,8 @@ class TrackRepositoryImpl(
                             it.previewUrl,
                         )
                     }
+                    val idFavoriteTrack = appDatabase.trackDao().getIdTrack()
+                    favoriteClicked(data, idFavoriteTrack)
                     emit(ResponseStatus.Success(data))
                 }
             }
@@ -103,5 +107,13 @@ class TrackRepositoryImpl(
 
     override fun clearHistory() {
         localStorage.clearHistory()
+    }
+
+    private fun favoriteClicked(data: List<Track>, idFavoriteTrack: List<String>) {
+        for (track in data) {
+            if (idFavoriteTrack.contains(track.trackId)) {
+                track.isFavorite = true
+            }
+        }
     }
 }

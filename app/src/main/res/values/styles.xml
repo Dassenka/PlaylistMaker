@@ -185,6 +185,12 @@
         <item name="android:tint">@color/black</item>
     </style>
 
+    <style name="LikeButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">51dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
     <style name="ProgressTrackTime">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

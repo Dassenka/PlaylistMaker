@@ -31,6 +31,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var collectionNameGroup: Group
     private lateinit var progressTrackTime: TextView
     private lateinit var buttonPlay: ImageButton
+    private lateinit var buttonLike: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +48,7 @@ class PlayerActivity : AppCompatActivity() {
         collectionNameGroup = findViewById(R.id.collectionNameGroup)
         progressTrackTime = findViewById(R.id.progressTrackTime)
         buttonPlay = findViewById(R.id.buttonPlay)
+        buttonLike = findViewById(R.id.likeButton)
 
         track = intent.getSerializableExtra(SearchFragment.PLAY_TRACK) as Track
 
@@ -60,6 +62,13 @@ class PlayerActivity : AppCompatActivity() {
             changeTime(it)
         }
 
+        //Подписываемся на состояние кнопки избранное
+        viewModel.isFavoriteLiveData().observe(this) { isFavourite ->
+            buttonLikeChanging(isFavourite)
+        }
+
+        viewModel.checkIdFavoriteTrack(track)
+
         installAttributes(track)
 
         // функция для подготовки медиаплеера
@@ -72,6 +81,10 @@ class PlayerActivity : AppCompatActivity() {
 
         buttonPlay.setOnClickListener {
             viewModel.playerState()
+        }
+
+        buttonLike.setOnClickListener {
+            viewModel.onFavoriteClicked(track)
         }
     }
 
@@ -126,5 +139,14 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun changeTime(currentTime: String) {
         progressTrackTime.text = currentTime
+    }
+
+    private fun buttonLikeChanging(isFavourite: Boolean) {
+        if (isFavourite) {
+            buttonLike.setImageResource(R.drawable.ic_like_button_press)
+        }
+        else {
+            buttonLike.setImageResource(R.drawable.ic_like_button)
+        }
     }
 }
