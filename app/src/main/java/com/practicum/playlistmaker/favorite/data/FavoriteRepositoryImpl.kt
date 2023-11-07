@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.favorite.data
 import com.practicum.playlistmaker.favorite.data.db.AppDatabase
 import com.practicum.playlistmaker.favorite.data.db.TrackDbConvertor
 import com.practicum.playlistmaker.favorite.data.db.entity.TrackEntity
-import com.practicum.playlistmaker.favorite.domain.db.FavoriteRepository
+import com.practicum.playlistmaker.favorite.domain.api.FavoriteRepository
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -29,7 +29,7 @@ class FavoriteRepositoryImpl(
     }
 
     override fun getIdFavoriteTrack(): Flow<List<String>> = flow {
-        emit(appDatabase.trackDao().getIdTrack())
+        emit(appDatabase.trackDao().getTracksIds())
     }
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {

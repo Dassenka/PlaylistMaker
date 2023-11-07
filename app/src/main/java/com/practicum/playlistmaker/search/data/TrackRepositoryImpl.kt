@@ -47,7 +47,7 @@ class TrackRepositoryImpl(
                             it.previewUrl,
                         )
                     }
-                    val idFavoriteTrack = appDatabase.trackDao().getIdTrack()
+                    val idFavoriteTrack = appDatabase.trackDao().getTracksIds()
                     favoriteClicked(data, idFavoriteTrack)
                     emit(ResponseStatus.Success(data))
                 }

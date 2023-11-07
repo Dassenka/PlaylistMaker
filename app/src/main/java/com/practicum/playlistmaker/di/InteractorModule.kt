@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.di
 
 import com.practicum.playlistmaker.favorite.domain.FavoriteInteractorImpl
-import com.practicum.playlistmaker.favorite.domain.db.FavoriteInteractor
+import com.practicum.playlistmaker.favorite.domain.api.FavoriteInteractor
 import com.practicum.playlistmaker.player.domain.MediaPlayerInteractor
 import com.practicum.playlistmaker.player.domain.impl.MediaPlayerInteractorImpl
 import com.practicum.playlistmaker.search.domain.api.TrackInteractor

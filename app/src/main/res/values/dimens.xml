@@ -14,6 +14,7 @@
 
     <dimen name="activity_player_attribute_size">13sp</dimen>
     <dimen name="album_corner_radius">8dp</dimen>
+    <dimen name="recycler_view_corner_radius">2dp</dimen>
     <dimen name="activity_player_guideline_padding">24dp</dimen>
     <dimen name="margin_between_attributes">17dp</dimen>
     <dimen name="attributes_margin_from_guideline">-8dp</dimen>

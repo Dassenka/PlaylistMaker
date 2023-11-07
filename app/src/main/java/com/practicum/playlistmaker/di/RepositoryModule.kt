@@ -4,7 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import com.practicum.playlistmaker.favorite.data.FavoriteRepositoryImpl
 import com.practicum.playlistmaker.favorite.data.db.TrackDbConvertor
-import com.practicum.playlistmaker.favorite.domain.db.FavoriteRepository
+import com.practicum.playlistmaker.favorite.domain.api.FavoriteRepository
 import com.practicum.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.practicum.playlistmaker.player.domain.MediaPlayerRepository
 import com.practicum.playlistmaker.search.data.TrackRepositoryImpl
