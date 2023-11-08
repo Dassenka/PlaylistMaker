@@ -2,6 +2,9 @@ package com.practicum.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import com.practicum.playlistmaker.favorite.data.FavoriteRepositoryImpl
+import com.practicum.playlistmaker.favorite.data.db.TrackDbConvertor
+import com.practicum.playlistmaker.favorite.domain.api.FavoriteRepository
 import com.practicum.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.practicum.playlistmaker.player.domain.MediaPlayerRepository
 import com.practicum.playlistmaker.search.data.TrackRepositoryImpl
@@ -16,7 +19,7 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     single<TrackRepository> {
-        TrackRepositoryImpl(get(), get())
+        TrackRepositoryImpl(get(), get(), get())
     }
 
     factory<MediaPlayerRepository> {
@@ -41,5 +44,11 @@ val repositoryModule = module {
                 SettingsRepositoryImpl.DAY_NIGHT_THEME_KEY,
                 Context.MODE_PRIVATE
             )
+    }
+
+    factory { TrackDbConvertor() }
+
+    single<FavoriteRepository> {
+        FavoriteRepositoryImpl(get(), get())
     }
 }

@@ -31,7 +31,7 @@ class TrackViewHolder(
             .load(track.artworkUrl100)
             .placeholder(R.drawable.ic_placeholder)
             .centerCrop()
-            .transform(RoundedCorners(artworkUrl100.resources.getDimensionPixelSize(R.dimen.album_corner_radius)))
+            .transform(RoundedCorners(artworkUrl100.resources.getDimensionPixelSize(R.dimen.recycler_view_corner_radius)))
             .into(artworkUrl100)
 
         itemView.setOnClickListener { clickListener.onTrackClick(track) }
