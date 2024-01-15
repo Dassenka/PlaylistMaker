@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.practicum.playlistmaker.LocalStorage
+import com.practicum.playlistmaker.favorite.data.PlaylistPhotoStorage
 import com.practicum.playlistmaker.favorite.data.db.AppDatabase
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -32,6 +33,10 @@ val dataModule = module {
 
     single {
         LocalStorage(get())
+    }
+
+    single {
+    PlaylistPhotoStorage(get())
     }
 
     single<NetworkClient> {

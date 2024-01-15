@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_mediaLibFragment_to_playerActivity"
             app:destination="@id/playerActivity" />
+        <action
+            android:id="@+id/action_mediaLibFragment_to_newPlaylistCreationFragment"
+            app:destination="@id/newPlaylistCreationFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -33,4 +36,9 @@
         android:name="com.practicum.playlistmaker.player.ui.PlayerActivity"
         android:label="activity_player"
         tools:layout="@layout/activity_player" />
+    <fragment
+        android:id="@+id/newPlaylistCreationFragment"
+        android:name="com.practicum.playlistmaker.lib.ui.NewPlaylistCreationFragment"
+        android:label="fragment_new_playlist_creation"
+        tools:layout="@layout/fragment_new_playlist_creation" />
 </navigation>

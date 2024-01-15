@@ -14,6 +14,7 @@
 
     <dimen name="activity_player_attribute_size">13sp</dimen>
     <dimen name="album_corner_radius">8dp</dimen>
+    <dimen name="playlist_corner_radius">8dp</dimen>
     <dimen name="recycler_view_corner_radius">2dp</dimen>
     <dimen name="activity_player_guideline_padding">24dp</dimen>
     <dimen name="margin_between_attributes">17dp</dimen>
@@ -25,5 +26,7 @@
     <dimen name="section_margin">24dp</dimen>
     <dimen name="text_pager_adapter">14sp</dimen>
     <dimen name="text_size_bottom_nav">12sp</dimen>
+    <dimen name="playlist_photo_size">160dp</dimen>
+    <dimen name="corner_radius_bottom_sheet_in_player">16dp</dimen>
 
 </resources>

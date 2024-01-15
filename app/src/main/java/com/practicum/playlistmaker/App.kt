@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
+import com.markodevcic.peko.PermissionRequester
 import com.practicum.playlistmaker.di.dataModule
 import com.practicum.playlistmaker.di.interactorModule
 import com.practicum.playlistmaker.di.repositoryModule
@@ -24,5 +25,7 @@ class App : Application() {
 
         val darkTheme = settingsInteractor.getThemeSettings()
         settingsInteractor.updateThemeSetting(darkTheme)
+
+        PermissionRequester.initialize(applicationContext)
     }
 }

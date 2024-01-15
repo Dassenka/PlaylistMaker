@@ -37,29 +37,48 @@ android {
 
 dependencies {
 
-    // Room
-    def room_version = "2.5.1"
-    implementation("androidx.room:room-runtime:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation 'com.github.bumptech.glide:glide:4.14.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
+    // Gson & Retrofit
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'androidx.core:core-ktx:1.9.0'
+
+    // Di (koin)
     implementation "io.insert-koin:koin-android:3.3.0"
+
+    // Jetpack navigation
     implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
     implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
-    implementation "androidx.fragment:fragment-ktx:1.5.6"
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    //Fragments
+    implementation 'androidx.fragment:fragment:1.5.7'
+    implementation "androidx.fragment:fragment-ktx:1.5.7"
+
+    //Activity
+    implementation 'androidx.activity:activity:1.6.0'
+    implementation 'androidx.activity:activity-ktx:1.6.0'
+    implementation "androidx.activity:activity:1.6.0-alpha05"
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+
+    // Room
+    implementation 'androidx.room:room-runtime:2.5.2'
+    kapt 'androidx.room:room-compiler:2.5.2'
+    implementation 'androidx.room:room-ktx:2.5.2'
+
+    // Peko
+    implementation 'com.markodevcic:peko:3.0.2'
+
 }

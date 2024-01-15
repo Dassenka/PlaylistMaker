@@ -1,18 +1,34 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.constraintlayout.widget.Group
+import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.favorite.domain.model.Playlist
+import com.practicum.playlistmaker.lib.model.PlaylistsState
+import com.practicum.playlistmaker.lib.ui.NewPlaylistCreationFragment
 import com.practicum.playlistmaker.player.domain.model.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.SearchFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -32,6 +48,21 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var progressTrackTime: TextView
     private lateinit var buttonPlay: ImageButton
     private lateinit var buttonLike: ImageButton
+    private lateinit var addTrackButton: ImageView
+    private lateinit var placeholderMessage: LinearLayout
+    private lateinit var buttonCreateNewPlayListBottomSheet: Button
+    private var isClickAllowed = true
+    private lateinit var playlists: RecyclerView
+    private var playlistName = ""
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private val adapter = PlayerPlaylistAdapter(
+        object : PlayerPlaylistAdapter.PlaylistClickListener {
+            override fun onPlaylistClick(playlist: Playlist) {
+                addTrackInPlaylist(playlist, track)
+            }
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +80,9 @@ class PlayerActivity : AppCompatActivity() {
         progressTrackTime = findViewById(R.id.progressTrackTime)
         buttonPlay = findViewById(R.id.buttonPlay)
         buttonLike = findViewById(R.id.likeButton)
+        addTrackButton = findViewById(R.id.addTrackButton)
+        placeholderMessage = findViewById(R.id.placeholderMessage)
+        buttonCreateNewPlayListBottomSheet = findViewById(R.id.buttonCreateNewPlayListBottomSheet)
 
         track = intent.getSerializableExtra(SearchFragment.PLAY_TRACK) as Track
 
@@ -65,6 +99,11 @@ class PlayerActivity : AppCompatActivity() {
         //Подписываемся на состояние кнопки избранное
         viewModel.isFavoriteLiveData().observe(this) { isFavourite ->
             buttonLikeChanging(isFavourite)
+        }
+
+        //Подписываемся на состояние добавления трэка в избранное
+        viewModel.isTrackInPlaylistLiveData().observe(this) { isAdded ->
+            toastMessage(isAdded)
         }
 
         viewModel.checkIdFavoriteTrack(track)
@@ -85,6 +124,61 @@ class PlayerActivity : AppCompatActivity() {
 
         buttonLike.setOnClickListener {
             viewModel.onFavoriteClicked(track)
+        }
+
+        playlists = findViewById(R.id.playlistInPlayer)
+        playlists.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        playlists.adapter = adapter
+
+        //bottomSheet
+        val bottomSheetContainer = findViewById<LinearLayout>(R.id.playerBottomSheet)
+        val overlay = findViewById<View>(R.id.overlay)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        addTrackButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            overlay.visibility = View.VISIBLE
+            viewModel.fillData()
+
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+        })
+
+        viewModel.statePlaylistsLiveData().observe(this) {
+            renderPlaylists(it)
+        }
+
+        //вызов NewPlaylistCreationFragment
+        buttonCreateNewPlayListBottomSheet.setOnClickListener {
+            supportFragmentManager.commit {
+                replace(
+                    R.id.playerActivityFragmentContainer,
+                    NewPlaylistCreationFragment.newInstance(true),
+                    NewPlaylistCreationFragment.TAG
+                )
+                addToBackStack(NewPlaylistCreationFragment.TAG)
+
+                bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+                val playerActivityLayout = findViewById<ConstraintLayout>(R.id.playerActivityLayout)
+                playerActivityLayout.isVisible = false
+            }
         }
     }
 
@@ -144,9 +238,73 @@ class PlayerActivity : AppCompatActivity() {
     private fun buttonLikeChanging(isFavourite: Boolean) {
         if (isFavourite) {
             buttonLike.setImageResource(R.drawable.ic_like_button_press)
-        }
-        else {
+        } else {
             buttonLike.setImageResource(R.drawable.ic_like_button)
         }
+    }
+
+    private fun renderPlaylists(state: PlaylistsState) {
+        when (state) {
+            is PlaylistsState.Content -> showContent(state.playlist)
+            is PlaylistsState.Empty -> showEmpty()
+        }
+    }
+
+    private fun showEmpty() {
+        playlists.visibility = View.GONE
+        placeholderMessage.visibility = View.VISIBLE
+    }
+
+    private fun showContent(playlist: List<Playlist>) {
+        playlists.visibility = View.VISIBLE
+        placeholderMessage.visibility = View.GONE
+
+        adapter?.listOfPlaylists?.clear()
+        adapter?.listOfPlaylists?.addAll(playlist)
+        adapter?.notifyDataSetChanged()
+    }
+
+
+    fun addTrackInPlaylist(playlist: Playlist, track: Track) {
+        if (clickDebounce()) {
+            viewModel.addTrackInPlaylist(playlist, track)
+            playlistName = playlist.playlistName
+        }
+    }
+
+    private fun toastMessage(isAdded: Boolean) {
+        if (isAdded) {
+            Toast.makeText(
+                this,
+                getString(R.string.toast_confirm_add_track_in_playlist, playlistName),
+                Toast.LENGTH_LONG
+            ).show()
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+
+        } else {
+            Toast.makeText(
+                this,
+                getString(R.string.toast_denied_add_track_in_playlist, playlistName),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    //ограничение нажатия на элементы списка не чаще одного раза в секунду
+    fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+
+            lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
