@@ -28,5 +28,18 @@
     <string name="button_add_playlists">Новый плейлист</string>
     <string name="favorite_tracks">Избранные треки</string>
     <string name="favorite_playlists">Плейлисты</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="input_playlist_name">Название*</string>
+    <string name="input_playlist_description">Описание</string>
+    <string name="create_new_playlist">Создать</string>
+    <string name="toast_confirm_create_playlist">Плейлист "%s" создан</string>
+    <string name="permission_needs_rationale">Для установки обложки плейлиста необходимо предоставить разрешение на доступ в галерею</string>
+    <string name="confirm_dialog_new_playlist_title">Завершить создание плейлиста?</string>
+    <string name="confirm_dialog_new_playlist_message">Все несохраненные данные будут потеряны</string>
+    <string name="confirm_dialog_cancel">Отмена</string>
+    <string name="confirm_dialog_complete">Завершить</string>
+    <string name="title_bottom_sheet">Добавить в плейлист</string>
+    <string name="toast_confirm_add_track_in_playlist">Добавлено в плейлист "%s"</string>
+    <string name="toast_denied_add_track_in_playlist">Трек уже добавлен в плейлист "%s"</string>
 
 </resources>

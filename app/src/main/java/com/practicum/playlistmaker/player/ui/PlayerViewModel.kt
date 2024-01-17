@@ -1,10 +1,14 @@
 package com.practicum.playlistmaker.player.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.favorite.domain.api.FavoriteInteractor
+import com.practicum.playlistmaker.favorite.domain.api.PlaylistInteractor
+import com.practicum.playlistmaker.favorite.domain.model.Playlist
+import com.practicum.playlistmaker.lib.model.PlaylistsState
 import com.practicum.playlistmaker.player.domain.MediaPlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -16,8 +20,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor,
-                      private val favoriteInteractor: FavoriteInteractor
+class PlayerViewModel(
+    private val mediaPlayerInteractor: MediaPlayerInteractor,
+    private val favoriteInteractor: FavoriteInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private var timerJob: Job? = null
@@ -30,6 +36,12 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor,
 
     private var _isFavoriteLiveData = MutableLiveData<Boolean>()
     fun isFavoriteLiveData(): LiveData<Boolean> = _isFavoriteLiveData
+
+    private val _statePlaylistsLiveData = MutableLiveData<PlaylistsState>()
+    fun statePlaylistsLiveData(): LiveData<PlaylistsState> = _statePlaylistsLiveData
+
+    private var _isTrackInPlaylistLiveData = MutableLiveData<Boolean>()
+    fun isTrackInPlaylistLiveData(): LiveData<Boolean> = _isTrackInPlaylistLiveData
 
     // функция для подготовки медиаплеера
     fun preparePlayer(previewUrl: String) {
@@ -59,7 +71,10 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor,
 
     //таймер проигрывателя
     private fun currentPosition(): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format((mediaPlayerInteractor.currentPosition())) ?: "00:00"
+        return SimpleDateFormat(
+            "mm:ss",
+            Locale.getDefault()
+        ).format((mediaPlayerInteractor.currentPosition())) ?: "00:00"
     }
 
     fun playerState() {
@@ -113,6 +128,43 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor,
                 track.isFavorite = false
             }
         }
+    }
+
+    fun addTrackInPlaylist(playlist: Playlist, track: Track) {
+        viewModelScope.launch {
+            val tracksIdInPlaylist = playlist.listOfTracksId.toString()
+
+            if (tracksIdInPlaylist.contains(track.trackId)) {
+                _isTrackInPlaylistLiveData.postValue(false)
+
+            } else {
+                playlistInteractor.addTracksInPlaylist(playlist.playlistId, track)
+                fillData()
+                _isTrackInPlaylistLiveData.postValue(true)
+            }
+        }
+    }
+
+    fun fillData() {
+        viewModelScope.launch {
+            playlistInteractor
+                .getAllPlaylists()
+                .collect { playlist ->
+                    processResult(playlist)
+                }
+        }
+    }
+
+    private fun processResult(playlist: List<Playlist>) {
+        if (playlist.isEmpty()) {
+            renderPlaylistsState(PlaylistsState.Empty())
+        } else {
+            renderPlaylistsState(PlaylistsState.Content(playlist))
+        }
+    }
+
+    private fun renderPlaylistsState(state: PlaylistsState) {
+        _statePlaylistsLiveData.postValue(state)
     }
 
     fun onPause() {

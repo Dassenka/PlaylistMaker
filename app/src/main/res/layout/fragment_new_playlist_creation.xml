@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/newPlaylistCreationFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".lib.ui.NewPlaylistCreationFragment">
+
+    <LinearLayout
+        android:id="@+id/backToPreviousFragment"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            style="@style/BackMainActivityStyle"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/padding_for_settings"
+            android:src="@drawable/ic_arrow_back" />
+
+        <TextView
+            style="@style/BackMainActivityStyle"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="28dp"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/new_playlist"
+            android:textFontWeight="500"
+            android:textSize="@dimen/text_size"
+            tools:targetApi="p" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/buttonAddPhoto"
+        android:layout_width="312dp"
+        android:layout_height="312dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="82dp"
+        android:background="@drawable/shape_new_playlist_back_photo"
+        android:src="@drawable/ic_add_photo_playlist"
+        app:layout_constraintDimensionRatio="H,1:1" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="426dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/InputLayoutPlayListName"
+            style="@style/InputLayoutPlayListName"
+            android:layout_width="match_parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/InputPlayListName"
+                style="@style/InputPlayListCreation"
+                android:hint="@string/input_playlist_name"
+                android:textCursorDrawable="@null" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/InputLayoutPlayListDescription"
+            style="@style/InputLayoutPlayListName"
+            android:layout_width="match_parent"
+            android:layout_marginTop="72dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/InputPlayListDescription"
+                style="@style/InputPlayListCreation"
+                android:hint="@string/input_playlist_description"
+                android:textCursorDrawable="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/buttonCreateNewPlayList"
+            style="@style/ButtonCreateNewPlayLisStyle"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/selector_button_create_new_playlist"
+            android:clickable="true"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="@string/create_new_playlist" />
+    </LinearLayout>
+</FrameLayout>
