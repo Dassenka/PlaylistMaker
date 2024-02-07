@@ -10,4 +10,5 @@ interface SharingInteractor {
         supportTheme: String,
         supportMessage: String
     )
+    fun sharePlaylist(message: String)
 }

@@ -22,6 +22,7 @@
             android:src="@drawable/ic_arrow_back" />
 
         <TextView
+            android:id="@+id/headerTitle"
             style="@style/BackMainActivityStyle"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="28dp"

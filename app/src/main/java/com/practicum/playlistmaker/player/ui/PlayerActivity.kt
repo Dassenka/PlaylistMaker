@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -22,7 +21,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorite.domain.model.Playlist
-import com.practicum.playlistmaker.lib.model.PlaylistsState
+import com.practicum.playlistmaker.lib.state.PlaylistsState
 import com.practicum.playlistmaker.lib.ui.NewPlaylistCreationFragment
 import com.practicum.playlistmaker.player.domain.model.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -170,7 +169,7 @@ class PlayerActivity : AppCompatActivity() {
             supportFragmentManager.commit {
                 replace(
                     R.id.playerActivityFragmentContainer,
-                    NewPlaylistCreationFragment.newInstance(true),
+                    NewPlaylistCreationFragment.newInstance("playerActivity"),
                     NewPlaylistCreationFragment.TAG
                 )
                 addToBackStack(NewPlaylistCreationFragment.TAG)

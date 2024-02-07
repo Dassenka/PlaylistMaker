@@ -12,7 +12,6 @@ class NewPlaylistCreationViewModel(
 ) : ViewModel() {
 
     fun saveNewPlayList(playlist: Playlist) {
-
         viewModelScope.launch {
             playlistInteractor
                 .createNewPlaylist(playlist)
@@ -21,6 +20,12 @@ class NewPlaylistCreationViewModel(
 
     fun savePlaylistPhotoToPrivateStorage(uri: Uri?): String? {
         return playlistInteractor.savePlaylistPhotoToPrivateStorage(uri)
+    }
 
+    fun updatePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor
+                .updatePlaylist(playlist)
+        }
     }
 }

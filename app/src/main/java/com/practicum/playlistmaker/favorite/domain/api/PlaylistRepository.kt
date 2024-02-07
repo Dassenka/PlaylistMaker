@@ -15,4 +15,8 @@ interface PlaylistRepository {
     fun savePlaylistPhotoToPrivateStorage(uri: Uri?): String?
 
     suspend fun addTracksInPlaylist(playlistId: Int, trackInPlaylist: Track)
+    fun getTracksFromPlaylist(listPlaylistId: List<String>): Flow<List<Track>>
+    suspend fun deleteTrackFromPlaylist(playlistId: String, trackId: String): Flow<List<Track>?>?
+    suspend fun deletePlaylistById(playlistId: Int): Flow<Unit?>
+
 }

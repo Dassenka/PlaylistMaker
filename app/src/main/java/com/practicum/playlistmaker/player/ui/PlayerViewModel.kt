@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.player.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.favorite.domain.api.FavoriteInteractor
 import com.practicum.playlistmaker.favorite.domain.api.PlaylistInteractor
 import com.practicum.playlistmaker.favorite.domain.model.Playlist
-import com.practicum.playlistmaker.lib.model.PlaylistsState
+import com.practicum.playlistmaker.lib.state.PlaylistsState
 import com.practicum.playlistmaker.player.domain.MediaPlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
