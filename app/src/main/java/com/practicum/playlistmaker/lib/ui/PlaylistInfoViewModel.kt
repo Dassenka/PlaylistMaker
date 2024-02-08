@@ -42,7 +42,7 @@ class PlaylistInfoViewModel(
         viewModelScope.launch {
             playlistInteractor.deleteTrackFromPlaylist(playlistId, trackId).collect {
                 renderPlaylistInfoState(it)
-                }
+            }
         }
     }
 
@@ -59,7 +59,7 @@ class PlaylistInfoViewModel(
         sharingInteractor.sharePlaylist(message)
     }
 
-    private fun sharePlaylistMessage(playlist: Playlist, tracks: List<Track>): String{
+    private fun sharePlaylistMessage(playlist: Playlist, tracks: List<Track>): String {
         val sb = StringBuilder()
         sb.append(playlist.playlistName).append("\n")
         if (playlist.playlistDescription?.isNotEmpty() == true) {
@@ -85,21 +85,20 @@ class PlaylistInfoViewModel(
     }
 
     fun getPlaylistTrackTime(tracks: List<Track>): String {
-            var playlistTime = 0L
-            for (track in tracks) {
-                playlistTime += track.trackTimeMillis
-            }
+        var playlistTime = 0L
+        for (track in tracks) {
+            playlistTime += track.trackTimeMillis
+        }
         val formatTime = SimpleDateFormat("mm", Locale.getDefault()).format(playlistTime)
-        val formatTextMinutes = formatNumberOfMinutes(formatTime.toInt())
-            return formatTime + formatTextMinutes
+        return formatNumberOfMinutes(formatTime.toInt())
     }
 
     private fun formatNumberOfMinutes(playlistTime: Int): String {
         return when {
-            playlistTime % 100 in 11..14 -> " минут"
-            playlistTime % 10 == 1 -> " минута"
-            playlistTime % 10 in 2..4 -> " минуты"
-            else -> " минут"
+            playlistTime % 100 in 11..14 -> "$playlistTime минут"
+            playlistTime % 10 == 1 -> "$playlistTime минута"
+            playlistTime % 10 in 2..4 -> "$playlistTime минуты"
+            else -> "$playlistTime минут"
         }
     }
 

@@ -90,7 +90,7 @@ class PlaylistRepositoryImpl(
             playlist.numberOfTracks = playlist.numberOfTracks.minus(1)
             updatePlaylist(playlist)
 
-            if (trackUnusedInAllPlaylist(trackId.toInt())) {
+            if (!trackUnusedInAllPlaylist(trackId.toInt())) {
                 appDatabase.trackInPlaylistDao().deleteTrackByIdFromTrackInPlaylistTable(trackId)
             }
 
@@ -106,16 +106,34 @@ class PlaylistRepositoryImpl(
         }
     }
 
+    private suspend fun trackUnusedInAllPlaylist(trackId: Int): Boolean {
+
+        val listOfPlaylists = appDatabase.playlistDao().getAllPlaylists()
+            .map { playlistEntity ->
+                playlistDbConvertor.map(playlistEntity)
+            }
+
+        for (playlist in listOfPlaylists) {
+            if (!playlist.listOfTracksId.isNullOrEmpty()){
+                val listOfTrackId = playlist.listOfTracksId as ArrayList<String>
+                val result = listOfTrackId.indexOf(trackId.toString()) > -1
+                return result
+            }
+        }
+        return false
+    }
+
     override suspend fun deletePlaylistById(playlistId: Int): Flow<Unit?> {
         try {
             val playlist = appDatabase.playlistDao().getPlayListById(playlistId)
             val listTrackId = convertFromStringToList(playlist.listOfTracksId)  //FromJson
+
             return if (listTrackId.isEmpty()) {
                 appDatabase.playlistDao().deletePlaylistById(playlist.playlistId)
                 flow { emit(Unit) }
             } else {
                 for (i in 0 until listTrackId.size) {
-                    if (trackUnusedInAllPlaylist(listTrackId[i])) {
+                    if (!trackUnusedInAllPlaylist(listTrackId[i])) {
                         appDatabase.trackInPlaylistDao()
                             .deleteTrackByIdFromTrackInPlaylistTable(listTrackId[i].toString())
                     }
@@ -128,20 +146,6 @@ class PlaylistRepositoryImpl(
         }
     }
 
-    private suspend fun trackUnusedInAllPlaylist(trackId: Int): Boolean {
-
-        val listOfPlaylists = appDatabase.playlistDao().getAllPlaylists()
-            .map { playlistEntity ->
-                playlistDbConvertor.map(playlistEntity)
-            }
-
-        listOfPlaylists.filter { playlist ->
-            val listOfTrackId = playlist.listOfTracksId as ArrayList<String>
-            return listOfTrackId.indexOf(trackId.toString()) > -1
-        }
-        return listOfPlaylists.isEmpty()
-    }
-
     private fun convertFromStringToList(listIdFromTable: String?): ArrayList<Int> {
         if (!listIdFromTable.isNullOrEmpty()) {
             val itemType = object : TypeToken<ArrayList<Int>>() {}.type
@@ -149,7 +153,6 @@ class PlaylistRepositoryImpl(
         }
         return ArrayList<Int>()
     }
-
 
     private fun convertFromPlaylistEntity(playList: List<PlaylistEntity>): List<Playlist> {
         return playList.map { playList -> playlistDbConvertor.map(playList) }
