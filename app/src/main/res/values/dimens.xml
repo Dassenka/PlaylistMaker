@@ -28,5 +28,7 @@
     <dimen name="text_size_bottom_nav">12sp</dimen>
     <dimen name="playlist_photo_size">160dp</dimen>
     <dimen name="corner_radius_bottom_sheet_in_player">16dp</dimen>
-
+    <dimen name="share_icon_size">24dp</dimen>
+    <dimen name="line_margin_top">8dp</dimen>
+    <dimen name="margin_top_tracks_bottomSheet">24dp</dimen>
 </resources>

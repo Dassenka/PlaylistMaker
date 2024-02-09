@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.databinding.FragmentFavoriteTracksBinding
-import com.practicum.playlistmaker.lib.model.FavoriteTracksState
+import com.practicum.playlistmaker.lib.state.FavoriteTracksState
 import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackAdapter
@@ -30,6 +30,11 @@ class FavoriteTracksFragment : Fragment() {
         object : TrackAdapter.TrackClickListener {
             override fun onTrackClick(track: Track) {
                 startActivity(track)
+            }
+        },
+        object : TrackAdapter.LongTrackClickListener {
+            override fun onTrackLongClick(track: Track): Boolean {
+                return true
             }
         }
     )

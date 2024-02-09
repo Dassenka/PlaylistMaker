@@ -11,7 +11,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorite.domain.model.Playlist
 
-class PlaylistViewHolder(parent: ViewGroup) :
+class PlaylistViewHolder(
+    parent: ViewGroup,
+    private val clickListener: PlaylistAdapter.PlaylistClickListener,
+) :
     RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context)
             .inflate(R.layout.playlist_card, parent, false)
@@ -33,6 +36,8 @@ class PlaylistViewHolder(parent: ViewGroup) :
                 RoundedCorners(playlistPhoto.resources.getDimensionPixelSize(R.dimen.playlist_corner_radius))
             )
             .into(playlistPhoto)
+
+        itemView.setOnClickListener { clickListener.onPlaylistClick(playlist) }
     }
 
     private fun formatNumberOfTracks(numberOfTracks: Int): String {

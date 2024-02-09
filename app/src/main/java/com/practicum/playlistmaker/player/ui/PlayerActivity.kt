@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -9,12 +8,14 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -22,7 +23,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorite.domain.model.Playlist
-import com.practicum.playlistmaker.lib.model.PlaylistsState
+import com.practicum.playlistmaker.lib.state.PlaylistsState
 import com.practicum.playlistmaker.lib.ui.NewPlaylistCreationFragment
 import com.practicum.playlistmaker.player.domain.model.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -170,16 +171,28 @@ class PlayerActivity : AppCompatActivity() {
             supportFragmentManager.commit {
                 replace(
                     R.id.playerActivityFragmentContainer,
-                    NewPlaylistCreationFragment.newInstance(true),
+                    NewPlaylistCreationFragment.newInstance("playerActivity"),
                     NewPlaylistCreationFragment.TAG
                 )
                 addToBackStack(NewPlaylistCreationFragment.TAG)
 
-                bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 val playerActivityLayout = findViewById<ConstraintLayout>(R.id.playerActivityLayout)
                 playerActivityLayout.isVisible = false
             }
         }
+
+        // добавление слушателя для обработки нажатия на кнопку системную кнопку Back и отображения диалога
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN){
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    }else {
+                        finish()
+                    }
+                }
+            })
     }
 
     override fun onPause() {

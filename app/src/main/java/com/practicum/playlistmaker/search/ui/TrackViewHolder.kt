@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.search.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import com.practicum.playlistmaker.search.domain.model.Track
 class TrackViewHolder(
     parent: ViewGroup,
     private val clickListener: TrackAdapter.TrackClickListener,
+    val longClickListener: TrackAdapter.LongTrackClickListener
 ) : RecyclerView.ViewHolder(
     LayoutInflater.from(parent.context).inflate(R.layout.track_card, parent, false)
 ) {
@@ -35,5 +37,6 @@ class TrackViewHolder(
             .into(artworkUrl100)
 
         itemView.setOnClickListener { clickListener.onTrackClick(track) }
+        itemView.setOnLongClickListener { longClickListener.onTrackLongClick(track) }
     }
 }

@@ -37,6 +37,11 @@ class SearchFragment : Fragment() {
             override fun onTrackClick(track: Track) {
                 startActivity(track)
             }
+        },
+        object : TrackAdapter.LongTrackClickListener {
+            override fun onTrackLongClick(track: Track): Boolean {
+                return true
+            }
         }
     )
 
@@ -44,6 +49,11 @@ class SearchFragment : Fragment() {
         object : TrackAdapter.TrackClickListener {
             override fun onTrackClick(track: Track) {
                 startActivity(track)
+            }
+        },
+        object : TrackAdapter.LongTrackClickListener {
+            override fun onTrackLongClick(track: Track): Boolean {
+                return true
             }
         }
     )

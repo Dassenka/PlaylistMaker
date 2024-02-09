@@ -6,32 +6,41 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.practicum.playlistmaker.databinding.FragmentListOfPlaylistsBinding
 import com.practicum.playlistmaker.favorite.domain.model.Playlist
-import com.practicum.playlistmaker.lib.model.PlaylistsState
+import com.practicum.playlistmaker.lib.state.PlaylistsState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistsFragment : Fragment(){
+class PlaylistsFragment : Fragment() {
 
     private lateinit var buttonCreateNewPlaylist: Button
 
     private val PlaylistsViewModel: PlaylistsViewModel by viewModel()
-    private var _binding: FragmentPlaylistsBinding? = null
+    private var _binding: FragmentListOfPlaylistsBinding? = null
     private val binding get() = _binding!!
-
-
-    private var adapter: PlaylistAdapter ? = null
+    private var isClickAllowed = true
     private lateinit var playlists: RecyclerView
+
+    private val adapter = PlaylistAdapter(
+        object : PlaylistAdapter.PlaylistClickListener {
+            override fun onPlaylistClick(playlist: Playlist) {
+                openPlaylist(playlist)
+            }
+        }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
+        _binding = FragmentListOfPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -41,17 +50,14 @@ class PlaylistsFragment : Fragment(){
         buttonCreateNewPlaylist = binding.buttonCreateNewPlaylist
 
         buttonCreateNewPlaylist.setOnClickListener {
-            findNavController().navigate(R.id.newPlaylistCreationFragment)
+            findNavController().navigate(
+                R.id.newPlaylistCreationFragment,
+                NewPlaylistCreationFragment.createArgs(null, "playlistsFragment")
+            )
         }
 
-        //PlaylistsViewModel.fillData()
-        //PlaylistsViewModel.stateLiveData().observe(viewLifecycleOwner) {
-        //    render(it)
-        //}
-
         playlists = binding.recyclerView
-        adapter = PlaylistAdapter()
-        playlists.layoutManager = GridLayoutManager(requireContext(),2)
+        playlists.layoutManager = GridLayoutManager(requireContext(), 2)
         playlists.adapter = adapter
 
         PlaylistsViewModel.fillData()
@@ -63,7 +69,6 @@ class PlaylistsFragment : Fragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        adapter = null
         playlists.adapter = null
     }
 
@@ -94,7 +99,31 @@ class PlaylistsFragment : Fragment(){
         adapter?.notifyDataSetChanged()
     }
 
+    private fun openPlaylist(playlist: Playlist) {
+        if (clickDebounce()) {
+            findNavController().navigate(
+                R.id.action_mediaLibFragment_to_playlistInfoFragment,
+                PlaylistInfoFragment.createArgs(playlist)
+            )
+        }
+    }
+
+    //ограничение нажатия на элементы списка не чаще одного раза в секунду
+    fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+
+            lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
     companion object {
         fun newInstance() = PlaylistsFragment()
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

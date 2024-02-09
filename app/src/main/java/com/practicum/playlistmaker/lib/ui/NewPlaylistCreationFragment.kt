@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.lib.ui
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
@@ -15,6 +16,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -60,7 +62,8 @@ class NewPlaylistCreationFragment : Fragment() {
 
     private var confirmDialog: MaterialAlertDialogBuilder? = null
     private var playlistName = ""
-    private var filePath : Uri? = null
+    private var filePath: Uri? = null
+    private var playlist: Playlist? = null
 
 
     override fun onCreateView(
@@ -74,8 +77,21 @@ class NewPlaylistCreationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        playlist = arguments?.getSerializable("playlist") as? Playlist
+
+        playlist?.let {
+            setAttributesForEditingPlaylist(it)
+            PARENT_FLAG = requireArguments().getString(PARENT_FLAG).toString()
+        }
+
         binding.buttonCreateNewPlayList.setOnClickListener {
-            savePlayList()
+            if (playlist == null) {
+                savePlayList()
+            } else {
+                lifecycleScope.launch {
+                    editingPlaylist(playlist!!)
+                }
+            }
         }
 
         binding.buttonAddPhoto.setOnClickListener {
@@ -90,7 +106,6 @@ class NewPlaylistCreationFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.buttonCreateNewPlayList.isEnabled = s?.isNotEmpty() == true
                 playlistName = s.toString()
-
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -128,7 +143,7 @@ class NewPlaylistCreationFragment : Fragment() {
 
     private fun checkPermission() {
         lifecycleScope.launch {
-            requester.request(android.Manifest.permission.READ_MEDIA_IMAGES).collect { result ->
+            requester.request(getCheckedStorageConst()).collect { result ->
                 when (result) {
                     is PermissionResult.Granted -> {
                         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -155,6 +170,14 @@ class NewPlaylistCreationFragment : Fragment() {
         }
     }
 
+    private fun getCheckedStorageConst(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            android.Manifest.permission.READ_MEDIA_IMAGES
+        }else{
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+    }
+
     private fun savePlayList() {
         val newPlayList = Playlist(
             0,
@@ -171,11 +194,15 @@ class NewPlaylistCreationFragment : Fragment() {
 
 
     private fun backButtonClick() {
-        if (filePath != null ||
-            playlistName.isNotEmpty() ||
-            binding.InputPlayListDescription.text?.isNotEmpty() == true
-        ) {
-            confirmDialog?.show()
+        if (PARENT_FLAG != "playlistInfoFragment") {
+            if (filePath != null ||
+                playlistName.isNotEmpty() ||
+                binding.InputPlayListDescription.text?.isNotEmpty() == true
+            ) {
+                confirmDialog?.show()
+            } else {
+                backToPreviousFragment()
+            }
         } else {
             backToPreviousFragment()
         }
@@ -183,12 +210,14 @@ class NewPlaylistCreationFragment : Fragment() {
 
     //смотрим откуда запускалось создание плейлиста
     private fun backToPreviousFragment() {
-        if (parentActivityPlayer) {
-            requireActivity().findViewById<ConstraintLayout>(R.id.playerActivityLayout).isVisible = true
+        if (PARENT_FLAG == "playerActivity") {
+            requireActivity().findViewById<ConstraintLayout>(R.id.playerActivityLayout).isVisible =
+                true
             parentFragmentManager.popBackStack()
-            parentActivityPlayer = false
+            PARENT_FLAG = ""
         } else {
-        findNavController().navigateUp()
+            findNavController().navigateUp()
+            PARENT_FLAG = ""
         }
     }
 
@@ -201,13 +230,74 @@ class NewPlaylistCreationFragment : Fragment() {
         ).show()
     }
 
+    private fun setAttributesForEditingPlaylist(playlist: Playlist) {
+        binding.headerTitle.setText(R.string.headerTitle_editing_playlist)
+        binding.InputPlayListName.setText(playlist?.playlistName)
+        binding.InputPlayListDescription.setText(playlist?.playlistDescription)
+        binding.buttonCreateNewPlayList.setText(R.string.button_editing_playlist)
+        if (playlist!!.playlistPhotoPath != null) {
+            Glide.with(this)
+                .load(playlist!!.playlistPhotoPath)
+                .centerCrop()
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(requireContext().resources.getDimensionPixelSize(R.dimen.album_corner_radius))
+                )
+                .into(binding.buttonAddPhoto)
+        }
+
+        binding.buttonCreateNewPlayList.isEnabled = true
+    }
+
+    private fun editingPlaylist(playlist: Playlist) {
+        var updatedPlaylist: Playlist? = null
+        val playlistId = playlist.playlistId
+        val updatedName = binding.InputPlayListName.text.toString()
+        val updatedDetails = binding.InputPlayListDescription.text.toString()
+        val updatedListOfTracksId = playlist.listOfTracksId
+        val updatedNumberOfTracks = playlist.numberOfTracks
+
+        if (filePath != null) {
+            updatedPlaylist = playlist.copy(
+                playlistId,
+                updatedName,
+                updatedDetails,
+                newPlaylistCreationViewModel.savePlaylistPhotoToPrivateStorage(filePath),
+                updatedListOfTracksId,
+                updatedNumberOfTracks
+            )
+            newPlaylistCreationViewModel.updatePlaylist(updatedPlaylist)
+        } else {
+            val updatedPhotoPath = playlist.playlistPhotoPath
+            if (filePath == null) {
+                updatedPlaylist = playlist.copy(
+                    playlistId,
+                    updatedName,
+                    updatedDetails,
+                    updatedPhotoPath,
+                    updatedListOfTracksId,
+                    updatedNumberOfTracks
+                )
+                newPlaylistCreationViewModel.updatePlaylist(updatedPlaylist)
+            }
+        }
+        val bundle = Bundle()
+        bundle.putSerializable("playlist", updatedPlaylist)
+        parentFragmentManager.setFragmentResult("playlist", bundle)
+        findNavController().popBackStack()
+    }
+
     companion object {
         const val TAG = "NewPlaylistCreationFragment"
+        private var PARENT_FLAG = ""
+        private const val ARGS_PLAYLIST_ID = "playlist"
 
-        private var parentActivityPlayer = false
-        fun newInstance(flagParentActivity: Boolean): NewPlaylistCreationFragment {
-            parentActivityPlayer = flagParentActivity
+        fun newInstance(flagParentActivity: String): NewPlaylistCreationFragment {
+            PARENT_FLAG = flagParentActivity
             return NewPlaylistCreationFragment()
         }
+
+        fun createArgs(playlist: Playlist?, flagParentActivity: String): Bundle =
+            bundleOf(ARGS_PLAYLIST_ID to playlist, PARENT_FLAG to flagParentActivity)
     }
 }
