@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -65,7 +66,7 @@ class PlaylistInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         playlist = arguments?.getSerializable("playlist") as? Playlist
-        showContent(playlist!!)
+        PlaylistInfoViewModel.getPlayListById(playlist!!.playlistId)
 
         listOfTracksRecycler = binding.listOfTracksRecycler
         listOfTracksRecycler.layoutManager =
@@ -122,7 +123,18 @@ class PlaylistInfoFragment : Fragment() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
-
+        // добавление слушателя для обработки нажатия на кнопку системную кнопку Back и отображения диалога
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (playlistBottomSheetBehavior?.state != BottomSheetBehavior.STATE_HIDDEN){
+                        playlistBottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+                    }else {
+                        findNavController().popBackStack()
+                    }
+                }
+            })
     }
 
     override fun onDestroyView() {
@@ -162,8 +174,12 @@ class PlaylistInfoFragment : Fragment() {
     }
 
     private fun showTracks(listOfTracks: List<Track>) {
+        val tracksWithArtworkUrl60 = listOfTracks.map { track ->
+            track.copy(artworkUrl100 = track.artworkUrl100.replaceAfterLast('/', "60x60bb.jpg"))
+        }
+
         adapter.track.clear()
-        adapter.track.addAll(listOfTracks)
+        adapter.track.addAll(tracksWithArtworkUrl60)
         adapter.notifyDataSetChanged()
 
         binding.playlistDuration.text = PlaylistInfoViewModel.getPlaylistTrackTime(adapter.track)
@@ -171,7 +187,7 @@ class PlaylistInfoFragment : Fragment() {
 
     private fun updateTracks(listOfTracks: List<Track>) {
         val updatedTracks = listOfTracks.map { track ->
-            track.copy()
+            track.copy(artworkUrl100 = track.artworkUrl100.replaceAfterLast('/', "60x60bb.jpg"))
         }
         adapter.track.clear()
         adapter.track.addAll(updatedTracks)
@@ -251,7 +267,7 @@ class PlaylistInfoFragment : Fragment() {
                 playlistBottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
 
                 lifecycleScope.launch {
-                    delay(400L)
+                    delay(500L)
                     findNavController().navigate(
                         R.id.action_playlistInfoFragment_to_newPlaylistCreationFragment,
                         NewPlaylistCreationFragment.createArgs(playlist, "playlistInfoFragment")

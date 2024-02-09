@@ -8,12 +8,14 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -174,11 +176,23 @@ class PlayerActivity : AppCompatActivity() {
                 )
                 addToBackStack(NewPlaylistCreationFragment.TAG)
 
-                bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 val playerActivityLayout = findViewById<ConstraintLayout>(R.id.playerActivityLayout)
                 playerActivityLayout.isVisible = false
             }
         }
+
+        // добавление слушателя для обработки нажатия на кнопку системную кнопку Back и отображения диалога
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN){
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    }else {
+                        finish()
+                    }
+                }
+            })
     }
 
     override fun onPause() {

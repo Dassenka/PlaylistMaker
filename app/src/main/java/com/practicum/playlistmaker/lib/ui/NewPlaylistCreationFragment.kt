@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.lib.ui
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
@@ -142,7 +143,7 @@ class NewPlaylistCreationFragment : Fragment() {
 
     private fun checkPermission() {
         lifecycleScope.launch {
-            requester.request(android.Manifest.permission.READ_MEDIA_IMAGES).collect { result ->
+            requester.request(getCheckedStorageConst()).collect { result ->
                 when (result) {
                     is PermissionResult.Granted -> {
                         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -166,6 +167,14 @@ class NewPlaylistCreationFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getCheckedStorageConst(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            android.Manifest.permission.READ_MEDIA_IMAGES
+        }else{
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
         }
     }
 

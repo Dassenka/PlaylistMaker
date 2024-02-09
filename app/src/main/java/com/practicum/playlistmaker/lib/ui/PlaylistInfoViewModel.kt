@@ -23,6 +23,13 @@ class PlaylistInfoViewModel(
     private val _stateLiveData = MutableLiveData<PlaylistInfoState>()
     fun stateLiveData(): LiveData<PlaylistInfoState> = _stateLiveData
 
+    fun getPlayListById(playlistId: Int) {
+        viewModelScope.launch {
+            val playlistById = playlistInteractor.getPlayListById(playlistId)
+            renderPlaylistInfoState(PlaylistInfoState.Content(playlistById))
+        }
+    }
+
     fun getTracksFromPlaylist(playlist: Playlist) {
         val listOfPlaylistsId = playlist.listOfTracksId?.toList()
         if (listOfPlaylistsId.isNullOrEmpty()) {
